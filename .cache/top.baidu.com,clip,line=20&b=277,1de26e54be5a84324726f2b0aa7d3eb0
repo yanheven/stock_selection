@@ -1,0 +1,52 @@
+status: 200
+content-length: 6480
+content-location: http://top.baidu.com/clip?line=20&b=277
+set-cookie: BAIDUID=629D8CD7FD07669AC80D6DE042DC691A:FG=1; max-age=31536000;
+ expires=Fri, 08-Jul-16 07:21:03 GMT; domain=.baidu.com; path=/; version=1
+vary: Accept-Encoding
+server: BWS/1.0
+-content-encoding: gzip
+date: Thu, 09 Jul 2015 07:21:03 GMT
+p3p: CP=" OTI DSP COR IVA OUR IND COM "
+content-type: text/html
+-varied-accept-encoding: gzip, deflate
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+        <title>榜单</title>
+        <base href="http://top.baidu.com/" />
+                <link rel="stylesheet" href="http://top.baidu.com/frontend/static/embed/clip.css?v=0219" />
+	<script>
+                                var href_ps_tn = 'SE_baiduhomet8_jmjb7mjw';
+        var href_ps_prep = 'http://www.baidu.com/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=';
+	  var toptrackserver="http://top.baidu.com/frontend/static";
+	</script>
+        <script src="http://top.baidu.com/frontend/static/embed/nsclick.js?v=0219" type="text/javascript"></script>
+        <script type="text/javascript">
+            try {document.execCommand('BackgroundImageCache', false, true);} catch(e) {}
+        </script>
+        <style>
+            .icon-xiang-imp {background:url(http://top.baidu.com/frontend/static/common/images/xiang.png) center center no-repeat !important;}
+        </style>
+    </head>
+    <body>
+<div id="list"></div>
+<script src="http://top.baidu.com/frontend/static/common/tangram.js" type="text/javascript"></script>
+<script type="text/javascript">
+var BD_DATA=[{"title":"\u4e50\u89c6\u7f51","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%C0%D6%CA%D3%CD%F8","detail_url":"detail?b=277&w=%C0%D6%CA%D3%CD%F8","clicks":65110,"trend":"fall"},{"title":"\u4e1c\u65b9\u8d22\u5bcc","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%B6%AB%B7%BD%B2%C6%B8%BB","detail_url":"detail?b=277&w=%B6%AB%B7%BD%B2%C6%B8%BB","clicks":28856,"trend":"rise"},{"title":"\u534e\u8c0a\u5144\u5f1f","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%BB%AA%D2%EA%D0%D6%B5%DC","detail_url":"detail?b=277&w=%BB%AA%D2%EA%D0%D6%B5%DC","clicks":7310,"trend":"rise"},{"title":"\u7f51\u5bbf\u79d1\u6280","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%CD%F8%CB%DE%BF%C6%BC%BC","detail_url":"detail?b=277&w=%CD%F8%CB%DE%BF%C6%BC%BC","clicks":2005,"trend":"fall"},{"title":"\u4e50\u666e\u533b\u7597","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%C0%D6%C6%D5%D2%BD%C1%C6","detail_url":"detail?b=277&w=%C0%D6%C6%D5%D2%BD%C1%C6","clicks":1733,"trend":"rise"},{"title":"\u4e07\u90a6\u8fbe","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%CD%F2%B0%EE%B4%EF","detail_url":"detail?b=277&w=%CD%F2%B0%EE%B4%EF","clicks":1673,"trend":"fall"},{"title":"\u795e\u5dde\u6cf0\u5cb3","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%C9%F1%D6%DD%CC%A9%D4%C0","detail_url":"detail?b=277&w=%C9%F1%D6%DD%CC%A9%D4%C0","clicks":1540,"trend":"fall"},{"title":"\u534e\u7b56\u5f71\u89c6","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%BB%AA%B2%DF%D3%B0%CA%D3","detail_url":"detail?b=277&w=%BB%AA%B2%DF%D3%B0%CA%D3","clicks":1323,"trend":"rise"},{"title":"\u78a7\u6c34\u6e90","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%B1%CC%CB%AE%D4%B4","detail_url":"detail?b=277&w=%B1%CC%CB%AE%D4%B4","clicks":1291,"trend":"rise"},{"title":"\u63a2\u8def\u8005","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%CC%BD%C2%B7%D5%DF","detail_url":"detail?b=277&w=%CC%BD%C2%B7%D5%DF","clicks":1276,"trend":"rise"},{"title":"\u7231\u5c14\u773c\u79d1","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%B0%AE%B6%FB%D1%DB%BF%C6","detail_url":"detail?b=277&w=%B0%AE%B6%FB%D1%DB%BF%C6","clicks":1203,"trend":"fall"},{"title":"\u4e2d\u9752\u5b9d","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%D6%D0%C7%E0%B1%A6","detail_url":"detail?b=277&w=%D6%D0%C7%E0%B1%A6","clicks":1118,"trend":"rise"},{"title":"\u6c47\u5ddd\u6280\u672f","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%BB%E3%B4%A8%BC%BC%CA%F5","detail_url":"detail?b=277&w=%BB%E3%B4%A8%BC%BC%CA%F5","clicks":970,"trend":"fair"},{"title":"\u6570\u7801\u89c6\u8baf","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%CA%FD%C2%EB%CA%D3%D1%B6","detail_url":"detail?b=277&w=%CA%FD%C2%EB%CA%D3%D1%B6","clicks":956,"trend":"fall"},{"title":"\u94f6\u4e4b\u6770","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%D2%F8%D6%AE%BD%DC","detail_url":"detail?b=277&w=%D2%F8%D6%AE%BD%DC","clicks":932,"trend":"fall"},{"title":"\u5357\u90fd\u7535\u6e90","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%C4%CF%B6%BC%B5%E7%D4%B4","detail_url":"detail?b=277&w=%C4%CF%B6%BC%B5%E7%D4%B4","clicks":918,"trend":"rise"},{"title":"\u56fd\u6c11\u6280\u672f","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%B9%FA%C3%F1%BC%BC%CA%F5","detail_url":"detail?b=277&w=%B9%FA%C3%F1%BC%BC%CA%F5","clicks":907,"trend":"fall"},{"title":"\u4e1c\u65b9\u65e5\u5347","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%B6%AB%B7%BD%C8%D5%C9%FD","detail_url":"detail?b=277&w=%B6%AB%B7%BD%C8%D5%C9%FD","clicks":902,"trend":"rise"},{"title":"\u5b89\u79d1\u751f\u7269","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%B0%B2%BF%C6%C9%FA%CE%EF","detail_url":"detail?b=277&w=%B0%B2%BF%C6%C9%FA%CE%EF","clicks":898,"trend":"fall"},{"title":"\u7279\u9510\u5fb7","tit_url":"http:\/\/www.baidu.com\/baidu?cl=3&tn=SE_baiduhomet8_jmjb7mjw&fr=top1000&wd=%CC%D8%C8%F1%B5%C2","detail_url":"detail?b=277&w=%CC%D8%C8%F1%B5%C2","clicks":898,"trend":"fall"}];
+var boardid = "277";
+</script>
+<script src="http://top.baidu.com/frontend/static/embed/clip.js?v=0219" type="text/javascript"></script>
+<script>
+defaults["p_name"] = "今日创业板股票排行榜";
+</script>
+<script type="text/javascript">
+var clickmonkey = {log: function(){}};
+if(typeof ClickMonkey != "undefined"){clickmonkey = ClickMonkey(false);}
+//var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+//document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F79a0e9c520104773e13ccd072bc956aa' type='text/javascript'%3E%3C/script%3E"));
+</script>
+    </body>
+</html>

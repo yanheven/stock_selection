@@ -1,0 +1,983 @@
+status: 200
+alternate-protocol: 443:quic,p=1
+content-length: 15428
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+content-disposition: attachment; filename="f.txt"
+set-cookie: SC=RV=:ED=cn; expires=Wed, 30-Dec-2015 00:52:58 GMT; path=/finance;
+ domain=.google.com.hk,
+ PREF=ID=1111111111111111:TM=1435625578:LM=1435625578:V=1:S=n5vxILd-BL2VpKDl;
+ expires=Thu, 29-Jun-2017 00:52:58 GMT; path=/;
+ domain=.google.com.hk,
+ NID=68=Yh0xajFsXXm7R7dKzpgJk4uAOpx8KGPdLrIjZLlG3RkTnyAr2Jjsgc3Xu2RyPUlnzTmnWUto7C7wjYntu-i8KGzdNmKJBm-tsayquLe79UCeZ-El0n0AxMFTpEV8s4Ei;
+ Domain=.google.com.hk; Path=/; Expires=Wed, 30-Dec-2015 00:52:58 GMT; HttpOnly
+expires: Tue, 30 Jun 2015 00:52:58 GMT
+server: GSE
+-content-encoding: gzip
+cache-control: private, max-age=0
+date: Tue, 30 Jun 2015 00:52:58 GMT
+p3p: CP="This is not a P3P policy! See
+ http://www.google.com/support/accounts/bin/answer.py?hl=en&answer=151657 for
+ more info."
+content-type: application/json; charset=UTF-8
+x-frame-options: SAMEORIGIN
+content-location: https://www.google.com.hk/finance?output=json&start=0&num=20&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28market_cap%20%3E%3D%200%29%20%26%20%28market_cap%20%3C%3D%201930000000000%29%20%26%20%28pe_ratio%20%3E%3D%200%29%20%26%20%28pe_ratio%20%3C%3D%2025099.999999999996%29%20%26%20%28dividend_yield%20%3E%3D%200%29%20%26%20%28dividend_yield%20%3C%3D%206.9%29%20%26%20%28price_change_52week%20%3E%3D%20-32.55%29%20%26%20%28price_change_52week%20%3C%3D%201405%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_price%20%3C%3D%201000%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%20100%29]&restype=company&ei=ExKRVfmWFYmRmAGbka1o&gl=cn&sortas=Low52Week
+
+
+{
+"start" : "0",
+"num" : "20",
+"num_company_results" : "2948",
+"num_mf_results" : "46",
+"num_all_results" : "",
+"original_query" : "[((exchange == \x22SHE\x22) | (exchange == \x22SHA\x22)) \x26 (market_cap \x3E= 0) \x26 (market_cap \x3C= 1930000000000) \x26 (pe_ratio \x3E= 0) \x26 (pe_ratio \x3C= 25099.999999999996) \x26 (dividend_yield \x3E= 0) \x26 (dividend_yield \x3C= 6.9) \x26 (price_change_52week \x3E= -32.55) \x26 (price_change_52week \x3C= 1405) \x26 (last_price \x3E= 0) \x26 (last_price \x3C= 1000) \x26 (low_52week \x3E= 0) \x26 (low_52week \x3C= 100)]",
+"query_for_display" : "[((exchange == &quot;SHE&quot;) | (exchange == &quot;SHA&quot;)) &amp; (market_cap &gt;= 0) &amp; (market_cap &lt;= 1930000000000) &amp; (pe_ratio &gt;= 0) &amp; (pe_ratio &lt;= 25099.999999999996) &amp; (dividend_yield &gt;= 0) &amp; (dividend_yield &lt;= 6.9) &amp; (price_change_52week &gt;= -32.55) &amp; (price_change_52week &lt;= 1405) &amp; (last_price &gt;= 0) &amp; (last_price &lt;= 1000) &amp; (low_52week &gt;= 0) &amp; (low_52week &lt;= 100)]",
+"results_type" : "COMPANY",
+"searchresults" :
+[
+{
+"title" : "长春高新",
+"id" : "703460",
+"is_active" : "",
+"ticker" : "000661",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "182.54亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "47.04",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.36",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "71.39",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "125.10",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "76.92",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "厚普股份",
+"id" : "415291937083676",
+"is_active" : "",
+"ticker" : "300471",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "98.52亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "40.53",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "124.53",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "71.29",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "飞天诚信",
+"id" : "1038155538212951",
+"is_active" : "",
+"ticker" : "300386",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "141.94亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "46.52",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "213.14",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "134.46",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "57.73",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "赛升药业",
+"id" : "561307235126789",
+"is_active" : "",
+"ticker" : "300485",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "66.46亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "60.92",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "50.77",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "华东医药",
+"id" : "700246",
+"is_active" : "",
+"ticker" : "000963",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "310.27亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "34.52",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.98",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "36.02",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "71.48",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "48.85",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "云南白药",
+"id" : "695388",
+"is_active" : "",
+"ticker" : "000538",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "836.35亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "32.39",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.42",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "58.87",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "79.73",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "47.10",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "丽珠集团",
+"id" : "11568617",
+"is_active" : "",
+"ticker" : "000513",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "186.31亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "34.75",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.70",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "51.89",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "64.52",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "46.15",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "迅游科技",
+"id" : "65185272415697",
+"is_active" : "",
+"ticker" : "300467",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "118.92亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "297.30",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "44.55",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "富瑞特装",
+"id" : "16392681",
+"is_active" : "",
+"ticker" : "300228",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "122.95亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "69.34",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.22",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "82.88",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "90.91",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "44.50",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "石基信息",
+"id" : "717937",
+"is_active" : "",
+"ticker" : "002153",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "410.79亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "96.09",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.09",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "163.67",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "119.60",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "44.42",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "游族网络",
+"id" : "719241",
+"is_active" : "",
+"ticker" : "002174",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "258.34亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "44.22",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "69.29",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "84.33",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "43.70",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "浙江鼎力",
+"id" : "528422171745997",
+"is_active" : "",
+"ticker" : "603338",
+"exchange" : "SHA",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "92.28亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "128.00",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "42.57",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "金雷风电",
+"id" : "455562938662155",
+"is_active" : "",
+"ticker" : "300443",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "89.55亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "143.25",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "42.16",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "日机密封",
+"id" : "350108177461269",
+"is_active" : "",
+"ticker" : "300470",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "62.66亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "49.84",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "105.72",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "41.52",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "三六五网",
+"id" : "482626853396623",
+"is_active" : "",
+"ticker" : "300295",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "111.92亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "88.91",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.38",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "104.90",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "40.19",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "焦点科技",
+"id" : "14739117",
+"is_active" : "",
+"ticker" : "002315",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "119.12亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "85.91",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.79",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "145.59",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "91.24",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "40.10",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "国药一致",
+"id" : "15466235",
+"is_active" : "",
+"ticker" : "000028",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "250.04亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "39.62",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "84.78",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "72.00",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "39.80",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "天齐锂业",
+"id" : "1072236",
+"is_active" : "",
+"ticker" : "002466",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "167.70亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "80.97",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "-",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "58.33",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "39.60",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "中国平安",
+"id" : "714447",
+"is_active" : "",
+"ticker" : "601318",
+"exchange" : "SHA",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "7371.87亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "13.62",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.90",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "94.99",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "76.55",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "38.90",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+, {
+"title" : "思美传媒",
+"id" : "396921015298160",
+"is_active" : "",
+"ticker" : "002712",
+"exchange" : "SHE",
+"is_supported_exchange" : "",
+"local_currency_symbol" : "￥",
+"columns" : [
+{
+"display_name": "",
+"value" : "64.11亿",
+"field" : "MarketCap",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "71.58",
+"field" : "PE",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "0.21",
+"field" : "DividendYield",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "39.82",
+"field" : "Price52WeekPercChange",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "72.86",
+"field" : "QuoteLast",
+"sort_order" : ""
+}
+, {
+"display_name": "",
+"value" : "38.90",
+"field" : "Low52Week",
+"sort_order" : "1"
+}
+]
+}
+]
+,
+"mf_searchresults" :
+[
+]
+}
