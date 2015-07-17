@@ -39,7 +39,7 @@ def manager_top(bdlx):
     for i in result:
         # print i['stockName'], i['averagePrice'], i['price'], i['circulationCapitalRatio']
         price = float(i['price'])
-        if price > 1000 or bdlx == 2:
+        if price > 10 or bdlx == 2:
             code = str(re.sub(r"[^\(]*\(", r"", i['stockName'])[:-1])
             name = i['stockName'].split('(')[0]
             d = {'code': code, 'price': i['price'], 'ratio': i['circulationCapitalRatio'], 'name': name}
@@ -60,6 +60,7 @@ def lowest_today():
     # 5days lowest
     url5 = 'http://xuanguapi.eastmoney.com/Stock/JS.aspx?type=xgq&sty=xgq&token=eastmoney&c=[hqzb05(1|5)]&p=1&jn=' \
           'FbpVPbpk&ps=40&s=hqzb05(1|5)&st=-1&r=1437009283929'
+
     http_client = httplib2.Http('.cache')
     resp, content = http_client.request(url, "GET")
     result = json.loads(content[13:]).get("Results")
@@ -84,20 +85,78 @@ def lowest_today():
             fb.writelines(i + "\n")
     return codes
 
+def lowest_163():
+    url = 'http://quotes.money.163.com/hs/realtimedata/service/marketIndexes.php?host=/hs/realtimedata/service/' \
+          'marketIndexes.php&page=0&query=HIGH_LOW_RECENTLY.HIGH_LOW:int_-1&fields=RN,SYMBOL,CODE,NAME,TYPE,PRICE,' \
+          'HIGH_LOW_RECENTLY,PERCENT&sort=PRICE&order=ASC&count=9999&type=query&callback=callback_9967058&req=51111'
+    url2 ='http://quotes.money.163.com/hs/realtimedata/service/marketIndexes.php?host=/hs/realtimedata/service/' \
+         'marketIndexes.php&page=1&query=HIGH_LOW_RECENTLY.HIGH_LOW:int_-1&fields=RN,SYMBOL,CODE,NAME,TYPE,PRICE,' \
+         'HIGH_LOW_RECENTLY,PERCENT&sort=PRICE&order=ASC&count=25&type=query&callback=callback_1993377099&req=5112'
+    resp, content = http_request.request(url, "GET")
+    index = content.index('"list":[') + 7
+
+    json_content = json.loads(content[index:-3])
+    codes = []
+    for i in json_content:
+        code = i['SYMBOL']
+        codes.append(code)
+    print len(codes)
+    return codes
+
+
 
 def lowest_goole():
-    url = "https://www.google.com.hk/finance?output=json&start=0&num=20&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22%" \
-          "29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28market_cap%20%3E%3D%200%29%20%26%20%28" \
-          "market_cap%20%3C%3D%201930000000000%29%20%26%20%28pe_ratio%20%3E%3D%200%29%20%26%20%28pe_ratio" \
-          "%20%3C%3D%2025099.999999999996%29%20%26%20%28dividend_yield%20%3E%3D%200%29%20%26%20%28dividend_yield" \
-          "%20%3C%3D%206.9%29%20%26%20%28price_change_52week%20%3E%3D%20-32.55%29%20%26%20%28price_change_52week" \
-          "%20%3C%3D%201405%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_price%20%3C%3D%201000%29%20%26%20" \
-          "%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%20100%29]&restype=company&" \
-          "ei=ExKRVfmWFYmRmAGbka1o&gl=cn&sortas=Low52Week"
-    http_client = httplib2.Http('.cache')
+
+    url = 'https://www.google.com.hk/finance?output=json&start=0&num=900&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%' \
+          '22%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28market_cap%20%3E%3D%200%29%20%26%20%28' \
+          'market_cap%20%3C%3D%202220000000000%29%20%26%20%28pe_ratio%20%3E%3D%200%29%20%26%20%28pe_ratio' \
+          '%20%3C%3D%2025099.999999999996%29%20%26%20%28dividend_yield%20%3E%3D%200%29%20%26%20%28dividend_yield' \
+          '%20%3C%3D%2012.64%29%20%26%20%28price_change_52week%20%3E%3D%20-67.69%29%20%26%20%28price_change_52week' \
+          '%20%3C%3D%2099%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_price%20%3C%3D%2016200.000000000002' \
+          '%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29]&restype=company&' \
+          'ei=WpGoVZG8BqaHjAGrzpiADw&gl=cn&sortas=Price52WeekPercChange&desc=1'
+
+    url = 'https://www.google.com.hk/finance?output=json&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%2' \
+          '2%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-67.69%29%2' \
+          '0%26%20%28price_change_52week%20%3C%3D%2099%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_pric' \
+          'e%20%3C%3D%2016200.000000000002%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%2' \
+          '08834%29]&restype=company&ei=WpGoVZG8BqaHjAGrzpiADw&gl=cn&sortas=Price52WeekPercChange&desc=1&num=300&start=0'
+
+
+    http_client = http_request
+    codes = []
+    detail = []
+    # for i in range(0, 11):
+    #     start = str(i)
+    #     new_rul = url + '&start=' + start
     resp, content = http_client.request(url, "GET")
-    # result = json.loads(content).get("searchresults")
-    print content
+    lindex = content.index('"searchresults"') + 17
+    rindex = content.index('"mf_searchresults"') -2
+    content = content[lindex : rindex]
+    json_content = json.loads(content)
+    for i in json_content:
+        code = i['ticker']
+        low52week = ''
+        quotelast =  ''
+        quotelast = float(i['columns'][-2]['value'])
+        low52week = float(i['columns'][-1]['value'])
+        d = {'code':code, 'lowest': low52week, 'price': quotelast}
+        print d, int(float(quotelast - low52week)/quotelast * 100)
+        detail.append(d)
+        codes.append(code)
+
+    print len(set(codes))
+    return detail
+
+def filte_lowest_from_google(detail, persent):
+    lowest_codes = []
+    for i in detail:
+        price = float(i['price'])
+        lowest = float(i['lowest'])
+        if (price - lowest) < float(price)/persent:
+            lowest_codes.append(i['code'])
+    return lowest_codes
+
 
 
 def check_manager_sale():
@@ -121,17 +180,18 @@ def check_manager_sale():
 def buy_lowest_manager_hold():
 
     # find lowest and manager increase hold
-
+    lowest_detail = lowest_goole()
     manager_buy_codes, manager_buy_dict = manager_top(1)
-    lowest_codes = lowest_today()
+
+    lowest_codes = filte_lowest_from_google(lowest_detail, 10)
     best = list(set(manager_buy_codes) & set(lowest_codes))
     codes = []
-    print 'Manager buy: %s' % manager_buy_codes
-    print 'Lowest: %s\n' % lowest_codes
+    print 'Manager buy num: %d \n %s\n' % (len(manager_buy_codes), manager_buy_codes)
+    print 'Lowestnum: %d \n %s\n' % (len(lowest_codes), lowest_codes)
     for i in manager_buy_codes:
         if i not in codes:
             codes.append(i)
-    print "Buy stock today:"
+    print "Buy stock today 10\%:"
     with open('hold.txt', 'a') as fb:
         for i in codes:
             if i in best:
@@ -139,6 +199,24 @@ def buy_lowest_manager_hold():
                 print i
     print '#' * 40
 
+    lowest_codes = filte_lowest_from_google(lowest_detail, 100.0/15)
+    best = list(set(manager_buy_codes) & set(lowest_codes))
+    codes = []
+    print 'Manager buy num: %d \n %s\n' % (len(manager_buy_codes), manager_buy_codes)
+    print 'Lowestnum: %d \n %s\n' % (len(lowest_codes), lowest_codes)
+    for i in manager_buy_codes:
+        if i not in codes:
+            codes.append(i)
+    print "Buy stock today 15%:"
+    with open('hold.txt', 'a') as fb:
+        for i in codes:
+            if i in best:
+                # fb.write(i + '\n')
+                print i
+                for j in lowest_detail:
+                    if j['code'] == i:
+                        print j
+    print '#' * 40
 
 if __name__ == "__main__":
     # s = '{"a":"是"}'
@@ -156,8 +234,5 @@ if __name__ == "__main__":
     # lowest_goole()
     buy_lowest_manager_hold()
     check_manager_sale()
-    # lowest = lowest_today()
-    # print len(lowest)
-
 
 
