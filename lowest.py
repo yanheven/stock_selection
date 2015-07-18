@@ -5,10 +5,13 @@ import time
 import json
 import datetime
 import re
+import urllib
 
 from utils import http_request
 
 
+MANAGER_BUY = 1
+MANAGER_SALE = 2
 def manager_top(bdlx):
     # bcjd=2015-07-13&ecjd=2015-07-14
     # cjd:chang day
@@ -16,7 +19,7 @@ def manager_top(bdlx):
     # bbdje=10&ebdje=100 range 10 thounsand
     # bzltb: percentage %%
     # titType: sort keyword,0,1:date 3:amount(10thounsand) 5:money 8:percentage
-    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=9999&page=1&callback=" \
+    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=3000&callback=" \
           "hxbase_json5&stateType=up&titType=5"
     if bdlx == 1:
         url +='&cjd=30'
@@ -26,16 +29,22 @@ def manager_top(bdlx):
     date = datetime.date.today()
     start_date = str(date - datetime.timedelta(days=1))
     # url += '&bcjd=%s&ecjd=%s'%(start_date,start_date)
+    ret_list = []
+    codes = []
+    # for i in range(1, 100):
+    # page = '&page=' + str(i)
+    # new_url = url + page
+    # print new_url
+    url += '&page=1'
     resp, content = http_request.request(url, "GET")
     content = content.replace('\"', '')
     content = content.replace('http:', '')
     content = re.sub(r"<[^<]*>", r"", content)
-    # print content
     content = re.sub(r"(,?)(\w+?)\s*?:", r"\1'\2' :", content)
     content = content.replace("'", "\"")
     result = json.loads(content[13:-1]).get('list')
-    ret_list = []
-    codes = []
+    # if not len(result):
+    #     break
     for i in result:
         # print i['stockName'], i['averagePrice'], i['price'], i['circulationCapitalRatio']
         price = float(i['price'])
@@ -117,12 +126,25 @@ def lowest_goole():
           'ei=WpGoVZG8BqaHjAGrzpiADw&gl=cn&sortas=Price52WeekPercChange&desc=1'
 
     url = 'https://www.google.com.hk/finance?output=json&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%2' \
-          '2%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-67.69%29%2' \
+          '2%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-9999%29%2' \
           '0%26%20%28price_change_52week%20%3C%3D%2099%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_pric' \
           'e%20%3C%3D%2016200.000000000002%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%2' \
           '08834%29]&restype=company&ei=WpGoVZG8BqaHjAGrzpiADw&gl=cn&sortas=Price52WeekPercChange&desc=1&num=300&start=0'
 
 
+    url = 'https://www.google.com.hk/finance?output=json&start=0&num=300&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22' \
+          '%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-99%29%20%' \
+          '26%20%28price_change_52week%20%3C%3D%20964%29%20%26%20%28high_52week%20%3E%3D%200%29%20%26%20%28high_52week' \
+          '%20%3C%3D%2022599.999999999996%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_price%20%3C%3D%' \
+          '2016400%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29]' \
+          '&restype=company&ei=9MmoVdmyK4n3jAGdhIL4Cg&gl=cn&sortas=Price52WeekPercChange&desc=1'
+    # encode_url = 'output=json&start=0&num=20&noIL=1&q=[((exchange == "SHE") | ' \
+    #       '(exchange == "SHA")) & (price_change_52week >= -67.69) & (price_change_52week <= 964) & (high_52week >= 0)' \
+    #       ' & (high_52week <= 22599.999999999996) & (last_price >= 0) & (last_price <= 16400) & (low_52week >= 0) &' \
+    #       ' (low_52week <= 8834)]&restype=company&ei=9MmoVdmyK4n3jAGdhIL4Cg&gl=cn&sortas=Price52WeekPercChange'
+    # print urllib.unquote(encode_url)
+    #
+    # url = urllib.urlencode(url)
     http_client = http_request
     codes = []
     detail = []
@@ -136,12 +158,12 @@ def lowest_goole():
     json_content = json.loads(content)
     for i in json_content:
         code = i['ticker']
-        low52week = ''
-        quotelast =  ''
-        quotelast = float(i['columns'][-2]['value'])
-        low52week = float(i['columns'][-1]['value'])
-        d = {'code':code, 'lowest': low52week, 'price': quotelast}
-        print d, int(float(quotelast - low52week)/quotelast * 100)
+        columns = i['columns']
+        highest = float(columns[1]['value'])
+        quotelast = float(columns[-2]['value'])
+        low52week = float(columns[-1]['value'])
+        d = {'code':code, 'lowest': low52week, 'price': quotelast, 'highest': highest}
+        # print d, int(float(quotelast - low52week)/quotelast * 100)
         detail.append(d)
         codes.append(code)
 
@@ -159,29 +181,41 @@ def filte_lowest_from_google(detail, persent):
 
 
 
-def check_manager_sale():
+def check_manager_transaction(choice, manager_codes):
+    # choice 1 for buy, 2 for sale
     # check manager sale, we sale
 
     hold = []
     with open('hold.txt', 'r') as fb:
         lines = fb.readlines()
         for i in lines:
-            hold.append(i.strip('\n'))
-    manager_sale , sale_dict = manager_top(2)
-    should_sale = set(hold) & set(manager_sale)
-    print 'Manager sales: %s' % manager_sale
-    print 'My hold: %s\n' % hold
-    print "Sale stock today:"
-    for i in should_sale:
-        print i
-    print '#' * 40
+            line = json.loads(i)
+            print line['code']
+            hold.append(line['code'])
+
+    should_transaction = set(hold) & set(manager_codes)
+    if choice == 1:
+        print 'Manager buy: %s' % manager_codes
+        print 'My hold: %s\n' % hold
+        print "buy More stock today:"
+        for i in should_transaction:
+            print i
+        print '#' * 40
+
+    else:
+        print 'Manager sales: %s' % manager_codes
+        print 'My hold: %s\n' % hold
+        print "Sale stock today:"
+        for i in should_transaction:
+            print i
+        print '#' * 40
 
 
-def buy_lowest_manager_hold():
+def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
 
     # find lowest and manager increase hold
-    lowest_detail = lowest_goole()
-    manager_buy_codes, manager_buy_dict = manager_top(1)
+    # lowest_detail = lowest_goole()
+    # manager_buy_codes, manager_buy_dict = manager_top(1)
 
     lowest_codes = filte_lowest_from_google(lowest_detail, 10)
     best = list(set(manager_buy_codes) & set(lowest_codes))
@@ -215,8 +249,21 @@ def buy_lowest_manager_hold():
                 print i
                 for j in lowest_detail:
                     if j['code'] == i:
-                        print j
+                        sale_price = int(j['price'] + (j['highest'] - j['lowest'])/2)
+                        profit = int((sale_price / j['price'] -1)*100)
+                        j['sale_price'] = sale_price
+                        j['profit%'] = profit
+                        print json.dumps(j)
     print '#' * 40
+
+
+def today_transaction():
+    lowest_detail = lowest_goole()
+    manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
+    manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
+    buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict)
+    check_manager_transaction(MANAGER_BUY, manager_buy_codes)
+    check_manager_transaction(MANAGER_SALE, manager_sale_codes)
 
 if __name__ == "__main__":
     # s = '{"a":"是"}'
@@ -232,7 +279,5 @@ if __name__ == "__main__":
     # while not lowest_today():
     #     pass
     # lowest_goole()
-    buy_lowest_manager_hold()
-    check_manager_sale()
-
+    today_transaction()
 
