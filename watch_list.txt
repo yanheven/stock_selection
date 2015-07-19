@@ -1,6 +1,9 @@
-000670
-{"lowest": 7.88, "code": "000670", "profit%": 83, "price": 8.74, "sale_price": 16, "highest": 24.18}
 002492
 {"lowest": 8.8, "code": "002492", "profit%": 77, "price": 10.15, "sale_price": 18, "highest": 25.98}
+
+000670
+{"lowest": 7.88, "code": "000670", "profit%": 83, "price": 8.74, "sale_price": 16, "highest": 24.18}
 002005
 {"lowest": 7.35, "code": "002005", "profit%": 62, "price": 8.01, "sale_price": 13, "highest": 18.35}
+002604
+{"lowest": 7.81, "code": "002604", "profit%": 69, "price": 8.24, "sale_price": 14, "highest": 20.8}

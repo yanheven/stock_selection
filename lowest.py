@@ -19,7 +19,7 @@ def manager_top(bdlx):
     # bbdje=10&ebdje=100 range 10 thounsand
     # bzltb: percentage %%
     # titType: sort keyword,0,1:date 3:amount(10thounsand) 5:money 8:percentage
-    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=3000&callback=" \
+    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=30000&callback=" \
           "hxbase_json5&stateType=up&titType=5"
     if bdlx == 1:
         url +='&cjd=30'
@@ -36,6 +36,7 @@ def manager_top(bdlx):
     # new_url = url + page
     # print new_url
     url += '&page=1'
+    print url
     resp, content = http_request.request(url, "GET")
     content = content.replace('\"', '')
     content = content.replace('http:', '')
