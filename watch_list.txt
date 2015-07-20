@@ -1,3 +1,7 @@
+600432
+{"lowest": 10.93, "code": "600432", "profit%": 49, "price": 12.73, "sale_price": 19, "highest": 25.3}
+
+
 002492
 {"lowest": 8.8, "code": "002492", "profit%": 77, "price": 10.15, "sale_price": 18, "highest": 25.98}
 

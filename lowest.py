@@ -12,7 +12,7 @@ from utils import http_request
 
 MANAGER_BUY = 1
 MANAGER_SALE = 2
-def manager_top(bdlx):
+def manager_top(bdlx, days=None):
     # bcjd=2015-07-13&ecjd=2015-07-14
     # cjd:chang day
     # bdlx:1 buy, 2 sale
@@ -21,7 +21,9 @@ def manager_top(bdlx):
     # titType: sort keyword,0,1:date 3:amount(10thounsand) 5:money 8:percentage
     url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=30000&callback=" \
           "hxbase_json5&stateType=up&titType=5"
-    if bdlx == 1:
+    if days:
+        url +='&cjd=' + str(days)
+    elif bdlx == 1:
         url +='&cjd=30'
     else:
         url += '&cjd=5'
@@ -201,7 +203,7 @@ def check_manager_transaction(choice, manager_codes):
         print "buy More stock today:"
         for i in should_transaction:
             print i
-        print '#' * 40
+        print '#' * 40 +'\n'
 
     else:
         print 'Manager sales: %s' % manager_codes
@@ -209,7 +211,7 @@ def check_manager_transaction(choice, manager_codes):
         print "Sale stock today:"
         for i in should_transaction:
             print i
-        print '#' * 40
+        print '#' * 40 +'\n'
 
 
 def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
@@ -232,7 +234,7 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
             if i in best:
                 # fb.write(i + '\n')
                 print i
-    print '#' * 40
+    print '#' * 40 +'\n'
 
     lowest_codes = filte_lowest_from_google(lowest_detail, 100.0/15)
     best = list(set(manager_buy_codes) & set(lowest_codes))
@@ -255,15 +257,16 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
                         j['sale_price'] = sale_price
                         j['profit%'] = profit
                         print json.dumps(j)
-    print '#' * 40
+    print '#' * 40 +'\n'
 
 
 def today_transaction():
     lowest_detail = lowest_goole()
     manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
+    manager_5day_buy_codes, manager_5days_buy_dict = manager_top(MANAGER_BUY, 5)
     manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
     buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict)
-    check_manager_transaction(MANAGER_BUY, manager_buy_codes)
+    check_manager_transaction(MANAGER_BUY, manager_5day_buy_codes)
     check_manager_transaction(MANAGER_SALE, manager_sale_codes)
 
 if __name__ == "__main__":
