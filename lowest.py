@@ -19,16 +19,16 @@ def manager_top(bdlx, days=None):
     # bbdje=10&ebdje=100 range 10 thounsand
     # bzltb: percentage %%
     # titType: sort keyword,0,1:date 3:amount(10thounsand) 5:money 8:percentage
-    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=30000&callback=" \
-          "hxbase_json5"  #&stateType=up&titType=5
+    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=3000&callback=" \
+          "hxbase_json5&stateType=up&titType=5"
 
     url += "&bdlx=" + str(bdlx)
     date = datetime.date.today()
     start_date = str(date - datetime.timedelta(days=41))
     # url += '&bcjd=%s&ecjd=%s'%(start_date,start_date)
     if days:
-        # url +='&cjd=' + str(days)
-        url += '&bcjd=%s&ecjd=%s'%(start_date,date)
+        url +='&cjd=' + str(days)
+        # url += '&bcjd=%s&ecjd=%s'%(start_date,date)
     elif bdlx == 1:
         url +='&cjd=30'
     else:
