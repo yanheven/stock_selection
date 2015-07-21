@@ -20,17 +20,19 @@ def manager_top(bdlx, days=None):
     # bzltb: percentage %%
     # titType: sort keyword,0,1:date 3:amount(10thounsand) 5:money 8:percentage
     url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=30000&callback=" \
-          "hxbase_json5&stateType=up&titType=5"
+          "hxbase_json5"  #&stateType=up&titType=5
+
+    url += "&bdlx=" + str(bdlx)
+    date = datetime.date.today()
+    start_date = str(date - datetime.timedelta(days=41))
+    # url += '&bcjd=%s&ecjd=%s'%(start_date,start_date)
     if days:
-        url +='&cjd=' + str(days)
+        # url +='&cjd=' + str(days)
+        url += '&bcjd=%s&ecjd=%s'%(start_date,date)
     elif bdlx == 1:
         url +='&cjd=30'
     else:
         url += '&cjd=5'
-    url += "&bdlx=" + str(bdlx)
-    date = datetime.date.today()
-    start_date = str(date - datetime.timedelta(days=1))
-    # url += '&bcjd=%s&ecjd=%s'%(start_date,start_date)
     ret_list = []
     codes = []
     # for i in range(1, 100):
@@ -57,7 +59,8 @@ def manager_top(bdlx, days=None):
             d = {'code': code, 'price': i['price'], 'ratio': i['circulationCapitalRatio'], 'name': name}
             codes.append(code)
             ret_list.append(d)
-    return codes, ret_list
+    print len(codes)
+    return list(set(codes)), ret_list
 
 def lowest_today():
     # time_stamp = str(int(time.time()*1000 - 999999))
@@ -198,7 +201,7 @@ def check_manager_transaction(choice, manager_codes):
 
     should_transaction = set(hold) & set(manager_codes)
     if choice == 1:
-        print 'Manager buy: %s' % manager_codes
+        print 'Manager buy num : %d' % len(manager_codes)
         print 'My hold: %s\n' % hold
         print "buy More stock today:"
         for i in should_transaction:
@@ -206,7 +209,7 @@ def check_manager_transaction(choice, manager_codes):
         print '#' * 40 +'\n'
 
     else:
-        print 'Manager sales: %s' % manager_codes
+        print 'Manager sales num : %d' % len(manager_codes)
         print 'My hold: %s\n' % hold
         print "Sale stock today:"
         for i in should_transaction:
@@ -214,7 +217,7 @@ def check_manager_transaction(choice, manager_codes):
         print '#' * 40 +'\n'
 
 
-def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
+def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
 
     # find lowest and manager increase hold
     # lowest_detail = lowest_goole()
@@ -223,7 +226,7 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
     lowest_codes = filte_lowest_from_google(lowest_detail, 10)
     best = list(set(manager_buy_codes) & set(lowest_codes))
     codes = []
-    print 'Manager buy num: %d \n %s\n' % (len(manager_buy_codes), manager_buy_codes)
+    print 'Manager buy num: %d \n' % (len(manager_buy_codes))
     print 'Lowestnum: %d \n %s\n' % (len(lowest_codes), lowest_codes)
     for i in manager_buy_codes:
         if i not in codes:
@@ -239,7 +242,7 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
     lowest_codes = filte_lowest_from_google(lowest_detail, 100.0/15)
     best = list(set(manager_buy_codes) & set(lowest_codes))
     codes = []
-    print 'Manager buy num: %d \n %s\n' % (len(manager_buy_codes), manager_buy_codes)
+    print 'Manager buy num: %d \n' % (len(manager_buy_codes))
     print 'Lowestnum: %d \n %s\n' % (len(lowest_codes), lowest_codes)
     for i in manager_buy_codes:
         if i not in codes:
@@ -261,13 +264,21 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict):
 
 
 def today_transaction():
+    record_709 = None
+    with open('709.txt', 'r') as fb:
+        record_709 = [x.strip('\n') for x in fb.readlines()]
+
     lowest_detail = lowest_goole()
-    manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
+    # manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
     manager_5day_buy_codes, manager_5days_buy_dict = manager_top(MANAGER_BUY, 5)
+    new_manager_buy = list(set(record_709 + manager_5day_buy_codes))
     manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
-    buy_lowest_manager_hold(lowest_detail, manager_buy_codes, manager_buy_dict)
+    buy_lowest_manager_hold(lowest_detail, new_manager_buy)
     check_manager_transaction(MANAGER_BUY, manager_5day_buy_codes)
     check_manager_transaction(MANAGER_SALE, manager_sale_codes)
+    with open('709.txt', 'w') as fb:
+        for i in new_manager_buy:
+            fb.writelines(i + '\n')
 
 if __name__ == "__main__":
     # s = '{"a":"是"}'
