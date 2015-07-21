@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 
-import httplib2
 import time
 import json
 import datetime
@@ -76,8 +75,7 @@ def lowest_today():
     url5 = 'http://xuanguapi.eastmoney.com/Stock/JS.aspx?type=xgq&sty=xgq&token=eastmoney&c=[hqzb05(1|5)]&p=1&jn=' \
           'FbpVPbpk&ps=40&s=hqzb05(1|5)&st=-1&r=1437009283929'
 
-    http_client = httplib2.Http('.cache')
-    resp, content = http_client.request(url, "GET")
+    resp, content = http_request.request(url, "GET")
     result = json.loads(content[13:]).get("Results")
     date = datetime.date.today()
     code_name = []
@@ -181,28 +179,31 @@ def filte_lowest_from_google(detail, persent):
     for i in detail:
         price = float(i['price'])
         lowest = float(i['lowest'])
-        if (price - lowest) < float(price)/persent:
+        if (price - lowest) < float(lowest)/persent:
             lowest_codes.append(i['code'])
     return lowest_codes
 
 
 
-def check_manager_transaction(choice, manager_codes):
+def check_manager_transaction(choice, manager_codes, lowest_detail=None):
     # choice 1 for buy, 2 for sale
     # check manager sale, we sale
+    # manager_codes would be sale or buy codes
 
-    hold = []
+    hold_codes = []
+    hold_detail = []
     with open('hold.txt', 'r') as fb:
         lines = fb.readlines()
         for i in lines:
             line = json.loads(i)
             print line['code']
-            hold.append(line['code'])
+            hold_codes.append(line['code'])
+            hold_detail.append(line)
 
-    should_transaction = set(hold) & set(manager_codes)
+    should_transaction = set(hold_codes) & set(manager_codes)
     if choice == 1:
         print 'Manager buy num : %d' % len(manager_codes)
-        print 'My hold: %s\n' % hold
+        print 'My hold: %s\n' % hold_codes
         print "buy More stock today:"
         for i in should_transaction:
             print i
@@ -210,50 +211,38 @@ def check_manager_transaction(choice, manager_codes):
 
     else:
         print 'Manager sales num : %d' % len(manager_codes)
-        print 'My hold: %s\n' % hold
+        print 'My hold: %s\n' % hold_codes
+        for i in lowest_detail:
+            code = i['code']
+            for j in hold_detail:
+                if code == j['code']:
+                    lowest = i['lowest']
+                    price_hold = j['price']
+                    lowest_percent_now = int(float(i['price'] - lowest) * 100 /  lowest)
+                    i['lowest_percent%_now'] = lowest_percent_now
+                    profit_now = ((i['price'] / price_hold) *100 -100)
+                    i['profit%_now'] = profit_now
+                    print i
         print "Sale stock today:"
         for i in should_transaction:
             print i
         print '#' * 40 +'\n'
 
 
-def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
 
-    # find lowest and manager increase hold
-    # lowest_detail = lowest_goole()
-    # manager_buy_codes, manager_buy_dict = manager_top(1)
-
-    lowest_codes = filte_lowest_from_google(lowest_detail, 10)
+def lowest_persentage(lowest_detail, manager_buy_codes, percent, detail=None):
+    lowest_codes = filte_lowest_from_google(lowest_detail, percent)
     best = list(set(manager_buy_codes) & set(lowest_codes))
     codes = []
-    print 'Manager buy num: %d \n' % (len(manager_buy_codes))
     print 'Lowestnum: %d \n %s\n' % (len(lowest_codes), lowest_codes)
     for i in manager_buy_codes:
         if i not in codes:
             codes.append(i)
-    print "Buy stock today 10\%:"
-    with open('hold.txt', 'a') as fb:
-        for i in codes:
-            if i in best:
-                # fb.write(i + '\n')
-                print i
-    print '#' * 40 +'\n'
-
-    lowest_codes = filte_lowest_from_google(lowest_detail, 100.0/15)
-    best = list(set(manager_buy_codes) & set(lowest_codes))
-    codes = []
-    print 'Manager buy num: %d \n' % (len(manager_buy_codes))
-    print 'Lowestnum: %d \n %s\n' % (len(lowest_codes), lowest_codes)
-    for i in manager_buy_codes:
-        if i not in codes:
-            codes.append(i)
-    print "Buy stock today 15%:"
-    with open('hold.txt', 'a') as fb:
-        for i in codes:
-            if i in best:
-                # fb.write(i + '\n')
-                print i
-                for j in lowest_detail:
+    print "Buy stock today, lowest percentage:%d" % int(100.0/percent)
+    for i in codes:
+        if i in best:
+            print i
+            for j in lowest_detail:
                     if j['code'] == i:
                         sale_price = int(j['price'] + (j['highest'] - j['lowest'])/2)
                         profit = int((sale_price / j['price'] -1)*100)
@@ -261,6 +250,18 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
                         j['profit%'] = profit
                         print json.dumps(j)
     print '#' * 40 +'\n'
+
+
+def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
+
+    # find lowest and manager increase hold
+    # lowest_detail = lowest_goole()
+    # manager_buy_codes, manager_buy_dict = manager_top(1)
+    for i in [10, 100.0/15, 5, 4, 100.0/30]:
+        lowest_persentage(lowest_detail, manager_buy_codes, i)
+
+
+
 
 
 def today_transaction():
@@ -275,7 +276,7 @@ def today_transaction():
     manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
     buy_lowest_manager_hold(lowest_detail, new_manager_buy)
     check_manager_transaction(MANAGER_BUY, manager_5day_buy_codes)
-    check_manager_transaction(MANAGER_SALE, manager_sale_codes)
+    check_manager_transaction(MANAGER_SALE, manager_sale_codes, lowest_detail)
     with open('709.txt', 'w') as fb:
         for i in new_manager_buy:
             fb.writelines(i + '\n')
