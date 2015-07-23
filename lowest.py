@@ -7,10 +7,16 @@ import re
 import urllib
 
 from utils import http_request
-
+from utils import table_util
 
 MANAGER_BUY = 1
 MANAGER_SALE = 2
+
+# P for profit
+# Avg for average
+# L for lowest
+# H for highest
+
 def manager_top(bdlx, days=None):
     # bcjd=2015-07-13&ecjd=2015-07-14
     # cjd:chang day
@@ -18,7 +24,7 @@ def manager_top(bdlx, days=None):
     # bbdje=10&ebdje=100 range 10 thounsand
     # bzltb: percentage %%
     # titType: sort keyword,0,1:date 3:amount(10thounsand) 5:money 8:percentage
-    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=3000&callback=" \
+    url = "http://stockdata.stock.hexun.com/ggzjc/data/ChangeHistory.aspx?count=30000&callback=" \
           "hxbase_json5&stateType=up&titType=5"
 
     url += "&bdlx=" + str(bdlx)
@@ -52,7 +58,7 @@ def manager_top(bdlx, days=None):
     for i in result:
         # print i['stockName'], i['averagePrice'], i['price'], i['circulationCapitalRatio']
         price = float(i['price'])
-        if price > 10 or bdlx == 2:
+        if price > 50 or bdlx == 2:
             code = str(re.sub(r"[^\(]*\(", r"", i['stockName'])[:-1])
             name = i['stockName'].split('(')[0]
             d = {'code': code, 'price': i['price'], 'ratio': i['circulationCapitalRatio'], 'name': name}
@@ -120,7 +126,7 @@ def lowest_163():
 
 def lowest_goole():
 
-    url = 'https://www.google.com.hk/finance?output=json&start=0&num=900&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%' \
+    url = 'https://www.google.com.hk/finance?output=json&start=50&num=1&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%' \
           '22%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28market_cap%20%3E%3D%200%29%20%26%20%28' \
           'market_cap%20%3C%3D%202220000000000%29%20%26%20%28pe_ratio%20%3E%3D%200%29%20%26%20%28pe_ratio' \
           '%20%3C%3D%2025099.999999999996%29%20%26%20%28dividend_yield%20%3E%3D%200%29%20%26%20%28dividend_yield' \
@@ -136,11 +142,12 @@ def lowest_goole():
           '08834%29]&restype=company&ei=WpGoVZG8BqaHjAGrzpiADw&gl=cn&sortas=Price52WeekPercChange&desc=1&num=300&start=0'
 
 
-    url = 'https://www.google.com.hk/finance?output=json&start=0&num=500&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22' \
+    url = 'https://www.google.com.hk/finance?output=json&num=500&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22' \
           '%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-99%29%20%' \
           '26%20%28price_change_52week%20%3C%3D%20964%29%20%26%20%28high_52week%20%3E%3D%200%29%20%26%20%28high_52week' \
           '%20%3C%3D%2022599.999999999996%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_price%20%3C%3D%' \
-          '2016400%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29]' \
+          '2016400%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29%20%26%20%28' \
+          'average_200day_price%20%3E%3D%200%29%20%26%20%28average_200day_price%20%3C%3D%20185%29]' \
           '&restype=company&ei=9MmoVdmyK4n3jAGdhIL4Cg&gl=cn&sortas=Price52WeekPercChange&desc=1'
     # encode_url = 'output=json&start=0&num=20&noIL=1&q=[((exchange == "SHE") | ' \
     #       '(exchange == "SHA")) & (price_change_52week >= -67.69) & (price_change_52week <= 964) & (high_52week >= 0)' \
@@ -152,31 +159,50 @@ def lowest_goole():
     http_client = http_request
     codes = []
     detail = []
-    # for i in range(0, 11):
-    #     start = str(i)
-    #     new_rul = url + '&start=' + start
-    resp, content = http_client.request(url, "GET")
-    lindex = content.index('"searchresults"') + 17
-    rindex = content.index('"mf_searchresults"') -2
-    content = content[lindex : rindex]
-    json_content = json.loads(content)
-    for i in json_content:
-        code = i['ticker']
-        columns = i['columns']
-        if columns[0]['value'] !='-':
-            change = float(columns[0]['value'])
-        else:
-            change = 0
-        highest = float(columns[1]['value'])
-        quotelast = float(columns[-2]['value'])
-        if quotelast !=0:
-            low52week = float(columns[-1]['value'])
-            d = {'code':code, 'lowest': low52week, 'price': quotelast, 'highest': highest, 'change_last_year': change}
-            if code == '000895':
-                d['highest'] = 27.58
-            # print d, int(float(quotelast - low52week)/quotelast * 100)
-            detail.append(d)
-            codes.append(code)
+    for i in range(0, 3300, 500):
+        start = str(i)
+        new_rul = url + '&start=' + start
+        resp, content = http_client.request(new_rul, "GET")
+        lindex = content.index('"searchresults"') + 17
+        rindex = content.index('"mf_searchresults"') -2
+        content = content[lindex : rindex].replace('\\x26', ' ')
+        # content = re.sub(r"\\x26([a-zA-Z]{2,6});", r"&\1;", content);
+        json_content = json.loads(content)
+
+        for i in json_content:
+            code = i['ticker']
+            columns = i['columns']
+            try:
+                change = float(columns[0]['value'])
+            except Exception as e:
+                change = 10000
+            try:
+                highest = float(columns[1]['value'])
+
+            except Exception as e:
+                highest = 10000
+            try:
+                quotelast = float(columns[-3]['value'])
+            except Exception as e:
+                quotelast = 10000
+            if quotelast !=0:
+                try:
+                    low52week = float(columns[-2]['value'])
+                except Exception as e:
+                    low52week = 10000
+                try:
+                    avg_200 = float(columns[-1]['value'])
+                except Exception as e:
+                    avg_200 = 10000
+                lowest_percent = int(quotelast / low52week * 100 -100)
+                avg_200_percent = int(quotelast / avg_200 * 100 -100)
+                d = {'code':code, 'L': low52week, 'price': quotelast, 'H': highest, 'change_last_year': change,
+                     'L%': lowest_percent, 'Avg%': avg_200_percent, 'Avg': avg_200}
+                if code == '000895':
+                    d['H'] = 27.58
+                # print d, int(float(quotelast - low52week)/quotelast * 100)
+                detail.append(d)
+                codes.append(code)
 
     print len(set(codes))
     return detail
@@ -186,14 +212,32 @@ def filte_lowest_from_google(detail, persent=None):
     if persent:
         for i in detail:
             price = float(i['price'])
-            lowest = float(i['lowest'])
-            if (price - lowest) < float(lowest)/persent:
+            lowest = float(i['L'])
+            if (price - lowest) < lowest*persent/100:
                 lowest_codes.append(i['code'])
     else:
         for i in detail:
             lowest_codes.append(i['code'])
     return lowest_codes
 
+def check_reopen(manager_codes, lowest_detail):
+    reopen = []
+    with open('reopen.txt', 'r') as fb:
+        lines = fb.readlines()
+        for i in lines:
+            reopen.append(i.strip('\n'))
+    manager_reopen = list(set(manager_codes) & set(reopen))
+    print manager_reopen
+    for i in lowest_detail:
+            code = i['code']
+            if code in manager_reopen:
+                lowest = i['L']
+                price_hold = i['price']
+                lowest_percent_now = int(float(i['price'] - lowest) * 100 /  lowest)
+                i['lowest_percent%_now'] = lowest_percent_now
+                profit_now = ((i['price'] / price_hold) *100 -100)
+                i['profit%_now'] = profit_now
+                print i
 
 
 def check_manager_transaction(choice, manager_codes, lowest_detail=None):
@@ -223,17 +267,25 @@ def check_manager_transaction(choice, manager_codes, lowest_detail=None):
     else:
         print 'Manager sales num : %d' % len(manager_codes)
         print 'My hold: %s\n' % hold_codes
+        my_hold = []
         for i in lowest_detail:
             code = i['code']
             for j in hold_detail:
                 if code == j['code']:
-                    lowest = i['lowest']
+                    lowest = i['L']
                     price_hold = j['price']
-                    lowest_percent_now = int(float(i['price'] - lowest) * 100 /  lowest)
-                    i['lowest_percent%_now'] = lowest_percent_now
-                    profit_now = ((i['price'] / price_hold) *100 -100)
-                    i['profit%_now'] = profit_now
-                    print i
+                    price = i['price']
+                    lowest_percent_now = int(float(price - lowest) * 100 /  lowest)
+                    i['L%_now'] = lowest_percent_now
+                    profit_now = ((price / price_hold) *100 -100)
+                    i['P%_now'] = profit_now
+                    sale_price = i['price'] + (i['H'] - i['price'])/2
+                    profit = int((sale_price / i['price'] -1)*100)
+                    i['sale'] = sale_price
+                    i['P%'] = profit
+                    my_hold.append(i)
+        table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H',
+                                      'sale', 'Avg%', 'Avg', 'P%_now', 'L%_now'])
         print "Sale stock today:"
         for i in should_transaction:
             print i
@@ -245,18 +297,41 @@ def lowest_persentage(lowest_detail, manager_buy_codes=None, percent=None, detai
     lowest_codes = filte_lowest_from_google(lowest_detail, percent)
     best = list(set(manager_buy_codes) & set(lowest_codes))
     print 'Lowestnum: %d \n' % (len(lowest_codes))
+    print 'Lowest and manager buy num: %d \n' % (len(best))
     if percent:
-        print "Buy stock today, lowest percentage:%d" % int(100.0/percent)
+        print "Buy stock today, lowest percentage manager buy:%d" % int(100.0/percent)
     else:
-        print "Buy stock today, lowest from last year:"
+        print "Buy stock today, lowest from last year manager 5 days buy:"
     for j in lowest_detail:
-        if j['code'] in best:
-            sale_price = j['price'] + (j['highest'] - j['price'])/2
+        if j['code'] in best or j['code'] == '000960':
+            sale_price = j['price'] + (j['H'] - j['price'])/2
             profit = int((sale_price / j['price'] -1)*100)
             j['sale_price'] = sale_price
-            j['profit%'] = profit
-            print json.dumps(j)
+            j['P%'] = profit
+            if not percent or percent == 30:
+                print json.dumps(j)
+            else:
+                print j['code']
     print '#' * 40 +'\n'
+
+
+def lowest_manager_sort(lowest_detail, manager_buy_codes):
+    lowest_codes = filte_lowest_from_google(lowest_detail)
+    best = list(set(manager_buy_codes) & set(lowest_codes))
+    lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in best],key=lambda x:x['L%'])
+    lowest_50 = []
+    for i in lowest_percent_sort:
+        sale_price = i['price'] + (i['H'] - i['price'])/2
+        profit = int((sale_price / i['price'] -1)*100)
+        i['sale'] = sale_price
+        i['P%'] = profit
+        # print json.dumps(i)
+        if i['Avg'] == 10000:
+            continue
+        if i['L%'] < 50 or i['Avg%'] < 0:
+            lowest_50.append(i)
+    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'sale', 'Avg%'])
+
 
 
 def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
@@ -264,7 +339,7 @@ def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
     # find lowest and manager increase hold
     # lowest_detail = lowest_goole()
     # manager_buy_codes, manager_buy_dict = manager_top(1)
-    for i in [10, 100.0/15, 5, 4, 100.0/30][::-1]:
+    for i in [10, 15, 20, 25, 30][::-1]:
         lowest_persentage(lowest_detail, manager_buy_codes, i)
 
 def buy_lowest_manager_5day_hold(lowest_detail, manager_buy_codes):
@@ -279,10 +354,10 @@ def bug_lowest_in_this_year(lowest_detail, percent):
     print 'buy lowest in this year:'
     for j in lowest_detail:
         if j['code'] in lowest_codes:
-            sale_price = j['price'] + (j['highest'] - j['price'])/2
+            sale_price = j['price'] + (j['H'] - j['price'])/2
             profit = int((sale_price / j['price'] -1)*100)
             j['sale_price'] = sale_price
-            j['profit%'] = profit
+            j['P%'] = profit
             print json.dumps(j)
     print '#' * 40 +'\n'
 
@@ -296,14 +371,18 @@ def today_transaction():
     manager_5day_buy_codes, manager_5days_buy_dict = manager_top(MANAGER_BUY, 5)
     new_manager_buy = list(set(record_709 + manager_5day_buy_codes))
     manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
-    buy_lowest_manager_hold(lowest_detail, new_manager_buy)
-    buy_lowest_manager_5day_hold(lowest_detail, manager_5day_buy_codes)
-    bug_lowest_in_this_year(lowest_detail,10)
+
+    lowest_manager_sort(lowest_detail, manager_5day_buy_codes)
+    # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
+    # buy_lowest_manager_5day_hold(lowest_detail, manager_5day_buy_codes)
+    # bug_lowest_in_this_year(lowest_detail,10)
     check_manager_transaction(MANAGER_BUY, manager_5day_buy_codes)
     check_manager_transaction(MANAGER_SALE, manager_sale_codes, lowest_detail)
     with open('709.txt', 'w') as fb:
         for i in new_manager_buy:
             fb.writelines(i + '\n')
+    # check_reopen(new_manager_buy, lowest_detail)
+
 
 if __name__ == "__main__":
     # s = '{"a":"是"}'
