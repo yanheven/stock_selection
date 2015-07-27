@@ -11,11 +11,15 @@ from utils import table_util
 
 MANAGER_BUY = 1
 MANAGER_SALE = 2
+turn_over_ratio = {}
+manager_buy = {}
+manager_sale = {}
 
 # P for profit
 # Avg for average
 # L for lowest
 # H for highest
+# MTP manager total buy price
 
 def manager_top(bdlx, days=None):
     # bcjd=2015-07-13&ecjd=2015-07-14
@@ -35,7 +39,7 @@ def manager_top(bdlx, days=None):
         url +='&cjd=' + str(days)
         # url += '&bcjd=%s&ecjd=%s'%(start_date,date)
     elif bdlx == 1:
-        url +='&cjd=30'
+        url +='&cjd=365'
     else:
         url += '&cjd=5'
     ret_list = []
@@ -58,14 +62,26 @@ def manager_top(bdlx, days=None):
     for i in result:
         # print i['stockName'], i['averagePrice'], i['price'], i['circulationCapitalRatio']
         price = float(i['price'])
-        if price > 50 or bdlx == 2:
+        if price > 10 or bdlx == 2:
             code = str(re.sub(r"[^\(]*\(", r"", i['stockName'])[:-1])
             name = i['stockName'].split('(')[0]
-            d = {'code': code, 'price': i['price'], 'ratio': i['circulationCapitalRatio'], 'name': name}
+            d = {'code': code, 'price': price, 'ratio': i['circulationCapitalRatio'], 'name': name}
             codes.append(code)
             ret_list.append(d)
+            date = i['changeDate'][-5:]
+            avgprice = float(i['averagePrice'])
+            if bdlx ==1 and (not manager_buy.has_key(code) or  manager_buy[code] < avgprice):
+                manager_buy[code] = avgprice
+            if bdlx ==2 and (not manager_sale.has_key(code) or  manager_sale[code] > avgprice):
+                manager_sale[code] = avgprice
+
+            # elif ret_dict[code]['total_price'] < price:
+            #     ret_dict[code]['total_price'] = price
+            #     ret_dict[code]['date'] = date
+            #     ret_dict[code]['avg'] = avgprice
+
     print len(codes)
-    return list(set(codes)), ret_list
+    return list(set(codes)), manager_buy
 
 def lowest_today():
     # time_stamp = str(int(time.time()*1000 - 999999))
@@ -171,6 +187,8 @@ def lowest_goole():
 
         for i in json_content:
             code = i['ticker']
+            if code.startswith('300'):
+                continue
             columns = i['columns']
             try:
                 change = float(columns[0]['value'])
@@ -204,8 +222,23 @@ def lowest_goole():
                 detail.append(d)
                 codes.append(code)
 
-    print len(set(codes))
+    print 'google lowest: ', len(set(codes))
     return detail
+
+def turn_over_sina():
+    url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1' \
+          '&num=4000&sort=turnoverratio&asc=0&node=hs_a&symbol=&_s_r_a=init'
+    resp, content = http_request.request(url, "GET")
+    content = re.sub(r":(\w+?):", r"fuck", content)
+    content = re.sub(r"(,?)(\w+?)\s*?:", r"\1'\2' :", content)
+    content = content.replace("'", "\"")
+    json_content = json.loads(content)
+    for i in json_content:
+        code = i['code']
+        ratio = int(i['turnoverratio'])
+        turn_over_ratio[code] = ratio
+    print 'sina turn over ratio: ', len(turn_over_ratio)
+
 
 def filte_lowest_from_google(detail, persent=None):
     lowest_codes = []
@@ -283,9 +316,11 @@ def check_manager_transaction(choice, manager_codes, lowest_detail=None):
                     profit = int((sale_price / i['price'] -1)*100)
                     i['sale'] = sale_price
                     i['P%'] = profit
-                    my_hold.append(i)
-        table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H',
-                                      'sale', 'Avg%', 'Avg', 'P%_now', 'L%_now'])
+                    i['TOR'] = turn_over_ratio.get(code, 10000)
+                    if price / price_hold < 2:
+                        my_hold.append(i)
+        table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
+                                        'Avg%', 'Avg', 'P%_now', 'L%_now', 'TOR'])
         print "Sale stock today:"
         for i in should_transaction:
             print i
@@ -315,22 +350,33 @@ def lowest_persentage(lowest_detail, manager_buy_codes=None, percent=None, detai
     print '#' * 40 +'\n'
 
 
-def lowest_manager_sort(lowest_detail, manager_buy_codes):
+def lowest_manager_sort(lowest_detail, manager_buy_codes, manager_5days_buy_dict):
     lowest_codes = filte_lowest_from_google(lowest_detail)
-    best = list(set(manager_buy_codes) & set(lowest_codes))
-    lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in best],key=lambda x:x['L%'])
+    # best = list(set(manager_buy_codes) & set(lowest_codes))
+    lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in lowest_codes],key=lambda x:x['L%'])
     lowest_50 = []
     for i in lowest_percent_sort:
         sale_price = i['price'] + (i['H'] - i['price'])/2
         profit = int((sale_price / i['price'] -1)*100)
         i['sale'] = sale_price
         i['P%'] = profit
+        i['MB'] = manager_buy.get(i['code'], 10000)
+        i['MS'] = manager_sale.get(i['code'], 10000)
+        # i['MTP'] = manager_5days_buy_dict[i['code']]['total_price']
+        # i['date'] = manager_5days_buy_dict[i['code']]['date']
+        # i['Avg'] = manager_5days_buy_dict[i['code']]['avg']
+        i['TOR'] = turn_over_ratio.get(i['code'], 10000)
         # print json.dumps(i)
         if i['Avg'] == 10000:
             continue
-        if i['L%'] < 50 or i['Avg%'] < 0:
+        if i['TOR'] > 8 and i['L%'] < 100 and i['TOR'] != 10000 and i['MB'] != 10000:
+
             lowest_50.append(i)
-    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'sale', 'Avg%'])
+        # if (i['L%'] < 100 and i['Avg%'] < 20) and i['price'] and i['P%'] > 20:
+        #         lowest_50.append(i)
+
+    lowest_50 = sorted(lowest_50, key=lambda  x : x['L%'], reverse=True)
+    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR'])
 
 
 
@@ -362,21 +408,24 @@ def bug_lowest_in_this_year(lowest_detail, percent):
     print '#' * 40 +'\n'
 
 def today_transaction():
+    turn_over_sina()
     record_709 = None
     with open('709.txt', 'r') as fb:
         record_709 = [x.strip('\n') for x in fb.readlines()]
 
     lowest_detail = lowest_goole()
     # manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
-    manager_5day_buy_codes, manager_5days_buy_dict = manager_top(MANAGER_BUY, 5)
-    new_manager_buy = list(set(record_709 + manager_5day_buy_codes))
-    manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
+    manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
+    new_manager_buy = list(set(record_709 + manager_buy_codes))
+    manager_top(MANAGER_SALE, 30)
 
-    lowest_manager_sort(lowest_detail, manager_5day_buy_codes)
+
+    lowest_manager_sort(lowest_detail, manager_buy_codes, manager_buy_dict)
     # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
     # buy_lowest_manager_5day_hold(lowest_detail, manager_5day_buy_codes)
     # bug_lowest_in_this_year(lowest_detail,10)
-    check_manager_transaction(MANAGER_BUY, manager_5day_buy_codes)
+    manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
+    check_manager_transaction(MANAGER_BUY, manager_buy_codes)
     check_manager_transaction(MANAGER_SALE, manager_sale_codes, lowest_detail)
     with open('709.txt', 'w') as fb:
         for i in new_manager_buy:

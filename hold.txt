@@ -1,1 +1,2 @@
-{"lowest": 10.93, "code": "600432", "profit%": 49, "price": 12.817, "sale_price": 19, "highest": 25.3}
+{"code": "000055", "price": 11.497}
+{"code": "002355", "price": 9.6}
