@@ -14,7 +14,10 @@ MANAGER_SALE = 2
 turn_over_ratio = {}
 manager_buy = {}
 manager_sale = {}
-
+quantity_relative_ratio = {}
+rise_top = {}
+black_list = ['600418', '002554', '000960', '601808', '600597', '600280', '002341', '002229', '002478', '002088', '002407', '000670', '002116', '000510', '002167', '002421', '002635', '600890', '002652', '002078', '600393', '', '', '', '', '', '', '', '', '', '', '']
+in_flow_ratio = {}
 # P for profit
 # Avg for average
 # L for lowest
@@ -83,6 +86,19 @@ def manager_top(bdlx, days=None):
     print len(codes)
     return list(set(codes)), manager_buy
 
+def rise_east():
+    url = 'http://xuanguapi.eastmoney.com/Stock/JS.aspx?type=xgq&sty=xgq&token=eastmoney&c=[hqzb11(1|5)]&p=1&jn' \
+          '=AzvrOrMg&ps=40&s=hqzb11(1|5)&st=-1&r=1438007615018'
+    resp, content = http_request.request(url, "GET")
+    json_content = json.loads(content[13:]).get("Results")
+    for i in json_content:
+        detail = i.split(',')
+        code = detail[1]
+        fluctuation = detail[3]
+        rise_top[code] = fluctuation
+    print 'rise top days:', len(rise_top)
+
+
 def lowest_today():
     # time_stamp = str(int(time.time()*1000 - 999999))
     # today lowest
@@ -96,6 +112,8 @@ def lowest_today():
     # 5days lowest
     url5 = 'http://xuanguapi.eastmoney.com/Stock/JS.aspx?type=xgq&sty=xgq&token=eastmoney&c=[hqzb05(1|5)]&p=1&jn=' \
           'FbpVPbpk&ps=40&s=hqzb05(1|5)&st=-1&r=1437009283929'
+
+
 
     resp, content = http_request.request(url, "GET")
     result = json.loads(content[13:]).get("Results")
@@ -113,12 +131,12 @@ def lowest_today():
         return False
     codes.sort(key=lambda code : int(code))
     # print codes
-    with open(str(date) + ".txt","w") as fb:
-        fb.writelines(code_name)
-    with open(str(date) + "-code.txt","w") as fb:
-        for i in codes:
-            fb.writelines(i + "\n")
-    return codes
+    # with open(str(date) + ".txt","w") as fb:
+    #     fb.writelines(code_name)
+    # with open(str(date) + "-code.txt","w") as fb:
+    #     for i in codes:
+    #         fb.writelines(i + "\n")
+    # return codes
 
 def lowest_163():
     url = 'http://quotes.money.163.com/hs/realtimedata/service/marketIndexes.php?host=/hs/realtimedata/service/' \
@@ -239,6 +257,41 @@ def turn_over_sina():
         turn_over_ratio[code] = ratio
     print 'sina turn over ratio: ', len(turn_over_ratio)
 
+def in_flow_sina():
+    url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/MoneyFlow.ssl_bkzj_ssggzj?page=1&num=4000&sort=r0_ratio&asc=0'
+    resp, content = http_request.request(url, "GET")
+    content = re.sub(r"(,?)(\w+?)\s*?:", r"\1'\2' :", content)
+    content = content.replace("'", "\"")
+    json_content = json.loads(content)
+    for i in json_content:
+        code = i['symbol'][2:]
+        trade = int(float(i['r0_ratio'])*100.0)
+        turn_over = int(float(i['turnover']))/100.0
+        in_flow_ratio[code] = trade
+        turn_over_ratio[code] = turn_over
+    print 'sina in flow ratio: ', len(in_flow_ratio)
+
+def quantity_relative_ratio_163():
+    url ='http://quotes.money.163.com/hs/service/diyrank.php?host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2' \
+         'Fdiyrank.php&page=0&query=STYPE%3AEQA&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2' \
+         'COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO' \
+         '.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=desc&count=2000&type=query'
+    smal_url = 'http://quotes.money.163.com/hs/service/diyrank.php?host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2' \
+         'Fdiyrank.php&page=0&query=SCSTC27_RNG%3AS&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2' \
+         'COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO' \
+         '.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=desc&count=2000&type=query'
+
+    resp, content = http_request.request(url, "GET")
+    json_content = json.loads(content)
+    stock_list = json_content.get('list')
+    print json_content.get('time')
+    for i in stock_list:
+        code = i['CODE'][1:]
+        ratio = float(str(i['LB'])[:4])
+        quantity_relative_ratio[code] = ratio
+    print '163 quantity_relative ratio: ', len(quantity_relative_ratio)
+
+
 
 def filte_lowest_from_google(detail, persent=None):
     lowest_codes = []
@@ -310,17 +363,19 @@ def check_manager_transaction(choice, manager_codes, lowest_detail=None):
                     price = i['price']
                     lowest_percent_now = int(float(price - lowest) * 100 /  lowest)
                     i['L%_now'] = lowest_percent_now
-                    profit_now = ((price / price_hold) *100 -100)
+                    profit_now = int((price / price_hold) *100 -100)
                     i['P%_now'] = profit_now
                     sale_price = i['price'] + (i['H'] - i['price'])/2
                     profit = int((sale_price / i['price'] -1)*100)
                     i['sale'] = sale_price
                     i['P%'] = profit
                     i['TOR'] = turn_over_ratio.get(code, 10000)
+                    i['LB'] = quantity_relative_ratio.get(code, 10000)
+                    i['IF'] = in_flow_ratio.get(code, 10000)
                     if price / price_hold < 2:
                         my_hold.append(i)
         table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
-                                        'Avg%', 'Avg', 'P%_now', 'L%_now', 'TOR'])
+                                        'Avg%', 'Avg', 'P%_now', 'L%_now', 'TOR', 'LB', 'IF'])
         print "Sale stock today:"
         for i in should_transaction:
             print i
@@ -366,17 +421,29 @@ def lowest_manager_sort(lowest_detail, manager_buy_codes, manager_5days_buy_dict
         # i['date'] = manager_5days_buy_dict[i['code']]['date']
         # i['Avg'] = manager_5days_buy_dict[i['code']]['avg']
         i['TOR'] = turn_over_ratio.get(i['code'], 10000)
+        i['LB'] = quantity_relative_ratio.get(i['code'], 10000)
+        i['FL'] = rise_top.get(i['code'], -10000)
+        i['IF'] = in_flow_ratio.get(i['code'], 10000)
         # print json.dumps(i)
         if i['Avg'] == 10000:
             continue
-        if i['TOR'] > 8 and i['L%'] < 100 and i['TOR'] != 10000 and i['MB'] != 10000:
+        if i['IF'] != 10000 and i['IF'] > 50 or i['L%'] < 100 and i['LB'] > 0 and i['LB']!=10000 and (i['LB'] > 1.5 or i['LB'] < 0.5):
+            # and i['FL']<30:
+            # and i['MB'] != 10000 i['TOR'] != 10000 and  :
+            # and i['price'] /i['MB'] < 1.2:
 
             lowest_50.append(i)
         # if (i['L%'] < 100 and i['Avg%'] < 20) and i['price'] and i['P%'] > 20:
         #         lowest_50.append(i)
 
-    lowest_50 = sorted(lowest_50, key=lambda  x : x['L%'], reverse=True)
-    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR'])
+ #   lowest_50 = sorted(lowest_50, key=lambda  x : x['L%'], reverse=True)
+ #   table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR', 'LB'])
+    
+    lowest_50 = sorted(lowest_50, key=lambda  x : x['LB'], reverse=False)
+    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR', 'LB', 'IF'])
+    
+    lowest_50 = sorted([x for x in lowest_50 if x['L%']<50], key=lambda  x : x['LB'], reverse=False)
+    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR', 'LB', 'IF'])
 
 
 
@@ -408,7 +475,7 @@ def bug_lowest_in_this_year(lowest_detail, percent):
     print '#' * 40 +'\n'
 
 def today_transaction():
-    turn_over_sina()
+    rise_east()
     record_709 = None
     with open('709.txt', 'r') as fb:
         record_709 = [x.strip('\n') for x in fb.readlines()]
@@ -418,8 +485,10 @@ def today_transaction():
     manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
     new_manager_buy = list(set(record_709 + manager_buy_codes))
     manager_top(MANAGER_SALE, 30)
-
-
+    
+    in_flow_sina()
+    #turn_over_sina()
+    quantity_relative_ratio_163()
     lowest_manager_sort(lowest_detail, manager_buy_codes, manager_buy_dict)
     # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
     # buy_lowest_manager_5day_hold(lowest_detail, manager_5day_buy_codes)
