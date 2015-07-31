@@ -445,7 +445,7 @@ def lowest_manager_sort(lowest_detail):
         # print json.dumps(i)
         if i['Avg'] == 10000:
             continue
-        if i['L%'] < 100 and i['LB'] > 0 and i['LB']!=10000 and (i['LB'] > 1.5 or i['LB'] < 0.5) and i['Avg%'] < 20:
+        if i['L%'] < 100 and i['LB'] > 0 and i['LB']!=10000 and (i['LB'] > 2.5 or i['LB'] < 0.5) and i['Avg%'] < 20:
             # and i['P%'] > 20:
             # and i['MB'] != 10000 i['TOR'] != 10000 and  :
             # and i['price'] /i['MB'] < 1.2:
