@@ -1,10 +1,6 @@
-# -*- coding:utf-8 -*-
-
-import time
-import json
+# -*- coding:utf-8 -*import json
 import datetime
 import re
-import urllib
 
 from utils import http_request
 from utils import table_util
