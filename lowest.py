@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*import json
 import datetime
 import re
+import json
 
 from utils import http_request
 from utils import table_util
@@ -15,12 +16,18 @@ rise_top = {}
 black_list = ['600418', '002554', '000960', '601808', '600597', '600280', '002341', '002229', '002478', '002088', '002407', '000670', '002116', '000510', '002167', '002421', '002635', '600890', '002652', '002078', '600393', '', '', '', '', '', '', '', '', '', '', '']
 in_flow_ratio = {}
 stock_size = {}
-
+change_ratio = {}
+hold_history = {}
+price_now = {}
 # P for profit
 # Avg for average
 # L for lowest
 # H for highest
 # MTP manager total buy price
+# def read_hold(hold_codes):
+#     for i in hold_codes:
+#         with open()
+
 
 def manager_top(bdlx, days=None):
     # bcjd=2015-07-13&ecjd=2015-07-14
@@ -263,10 +270,15 @@ def in_flow_sina():
     json_content = json.loads(content)
     for i in json_content:
         code = i['symbol'][2:]
-        trade = int(float(i['r0_ratio'])*100.0)
+        inflow = int(float(i['r0_ratio'])*100.0)
         turn_over = int(float(i['turnover']))/100.0
-        in_flow_ratio[code] = trade
+        change = int(float(i['changeratio'])*1000)/10.0
+        price = int(float(i['trade'])*100)/100.0
+        in_flow_ratio[code] = inflow
         turn_over_ratio[code] = turn_over
+        change_ratio[code] = change
+        price_now[code] = price
+    print 'sina turn over ratio: ', len(turn_over_ratio)
     print 'sina in flow ratio: ', len(in_flow_ratio)
 
 def stock_size_sina():
@@ -291,7 +303,7 @@ def quantity_relative_ratio_163():
     smal_url = 'http://quotes.money.163.com/hs/service/diyrank.php?host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2' \
          'Fdiyrank.php&page=0&query=SCSTC27_RNG%3AS&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2' \
          'COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO' \
-         '.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=desc&count=2000&type=query'
+         '.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=desc&count=4000&type=query'
 
     resp, content = http_request.request(url, "GET")
     json_content = json.loads(content)
@@ -372,7 +384,8 @@ def check_manager_transaction(choice, lowest_detail=None):
             if code == j['code']:
                 lowest = i['L']
                 price_hold = j['price']
-                price = i['price']
+                price = price_now.get(code, 10000)
+                i['price'] = price
                 lowest_percent_now = int(float(price - lowest) * 100 /  lowest)
                 i['L%_now'] = lowest_percent_now
                 profit_now = int((price / price_hold) *100 -100)
@@ -383,12 +396,13 @@ def check_manager_transaction(choice, lowest_detail=None):
                 i['P%'] = profit
                 i['TOR'] = turn_over_ratio.get(code, 10000)
                 i['LB'] = quantity_relative_ratio.get(code, 10000)
-                i['IF'] = in_flow_ratio.get(code, 10000)
+                i['IF%'] = in_flow_ratio.get(code, 10000)
                 i['NMC'] = stock_size.get(code, 0)
+                i['CH'] = change_ratio.get(code, 10000)
                 if price / price_hold < 2:
                     my_hold.append(i)
     table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
-                                    'Avg%', 'Avg', 'P%_now', 'L%_now', 'TOR', 'LB', 'IF','NMC'])
+                                    'Avg%', 'P%_now', 'TOR', 'LB', 'IF%','NMC', 'CH'])
     # print "Sale stock today:"
     # for i in should_transaction:
     #     print i
@@ -436,12 +450,15 @@ def lowest_manager_sort(lowest_detail):
         i['TOR'] = turn_over_ratio.get(i['code'], 10000)
         i['LB'] = quantity_relative_ratio.get(i['code'], 10000)
         # i['FL'] = rise_top.get(i['code'], -10000)
-        i['IF'] = in_flow_ratio.get(i['code'], 10000)
+        i['IF%'] = in_flow_ratio.get(i['code'], 10000)
         i['NMC'] = stock_size.get(i['code'], 0)
+        i['CH'] = change_ratio.get(i['code'], 10000)
         # print json.dumps(i)
         if i['Avg'] == 10000:
             continue
-        if i['L%'] < 100 and i['LB'] > 0 and i['LB']!=10000 and (i['LB'] > 2.5 or i['LB'] < 0.5) and i['Avg%'] < 20:
+        if i['L%'] < 100 and i['LB'] > 0 and i['LB']!=10000 and i['LB'] > 2.5:
+            #  and i['CH'] < 5 and i['CH'] > -5:
+            # and i['Avg%'] < 20:
             # and i['P%'] > 20:
             # and i['MB'] != 10000 i['TOR'] != 10000 and  :
             # and i['price'] /i['MB'] < 1.2:
@@ -453,10 +470,10 @@ def lowest_manager_sort(lowest_detail):
  #   table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR', 'LB'])
     
     lowest_50 = sorted(lowest_50, key=lambda  x : x['LB'], reverse=False)[-20:]
-    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF', 'NMC'])
+    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
     
     lowest_50 = sorted([x for x in lowest_50 if x['L%']<50], key=lambda  x : x['LB'], reverse=False)[-10:]
-    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF', 'NMC'])
+    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
 
 
 
@@ -498,7 +515,7 @@ def today_transaction():
     
     stock_size_sina()
     in_flow_sina()
-    turn_over_sina()
+    #turn_over_sina()
     quantity_relative_ratio_163()
     lowest_manager_sort(lowest_detail)
     # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
