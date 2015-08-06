@@ -315,9 +315,7 @@ def stock_size_sina():
 
 def quantity_relative_ratio_163():
     url ='http://quotes.money.163.com/hs/service/diyrank.php?host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2' \
-         'Fdiyrank.php&page=0&query=STYPE%3AEQA&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2' \
-         'COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO' \
-         '.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=desc&count=2000&type=query'
+         'Fdiyrank.php&page=0&query=STYPE%3AEQA&fields=SYMBOL%2CLB&sort=LB&order=desc&count=4000&type=query'
     smal_url = 'http://quotes.money.163.com/hs/service/diyrank.php?host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2' \
          'Fdiyrank.php&page=0&query=SCSTC27_RNG%3AS&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2' \
          'COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO' \
@@ -328,8 +326,12 @@ def quantity_relative_ratio_163():
     stock_list = json_content.get('list')
     print json_content.get('time')
     for i in stock_list:
-        code = i['CODE'][1:]
-        ratio = float(str(i['LB'])[:4])
+        code = i['SYMBOL']
+        ratio = i.get('LB')
+        if ratio:
+            ratio = float(str(ratio)[:4])
+        else:
+            ratio = 10000
         quantity_relative_ratio[code] = ratio
     print '163 quantity_relative ratio: ', len(quantity_relative_ratio)
 
@@ -495,7 +497,7 @@ def lowest_manager_sort(lowest_detail):
         # print json.dumps(i)
         if i['Avg'] == 10000:
             continue
-        if i['L%'] < 50 and i['LB']!=10000 and i['LB'] > 2  and i['P%'] > 25 and i['CH'] < -5:
+        if i['LB'] != 10000 and i['L%'] < 50 and i['P%'] > 25  and (i['LB'] > 2 or i['TOR'] > 7):
             #  and i['CH'] < 5 and i['CH'] > -5:
             # and i['Avg%'] < 20:
             # and i['P%'] > 20:
@@ -511,7 +513,7 @@ def lowest_manager_sort(lowest_detail):
    # lowest_100 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)[-20:]
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
     
-    lowest_50 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)
+    lowest_50 = sorted(lowest, key=lambda  x : x['L%'], reverse=False)
     table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH', 'CH5', 'CH30', 'CH90'])
 
 
