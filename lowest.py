@@ -23,6 +23,7 @@ drop = {}
 week_change = {}
 month_change = {}
 quarter_change = {}
+pe_ratio = {}
 # P for profit
 # Avg for average
 # L for lowest
@@ -320,20 +321,56 @@ def quantity_relative_ratio_163():
          'Fdiyrank.php&page=0&query=SCSTC27_RNG%3AS&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2' \
          'COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO' \
          '.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=desc&count=4000&type=query'
-
+    url = 'http://quotes.money.163.com/hs/service/diyrank.php?host=http%3A%2F%2Fquotes.money.163.com%2Fhs%2Fservice%2Fdiyrank.php&page=0&query=STYPE%3AEQA&fields=NO%2CSYMBOL%2CNAME%2CPRICE%2CPERCENT%2CUPDOWN%2CFIVE_MINUTE%2COPEN%2CYESTCLOSE%2CHIGH%2CLOW%2CVOLUME%2CTURNOVER%2CHS%2CLB%2CWB%2CZF%2CPE%2CMCAP%2CTCAP%2CMFSUM%2CMFRATIO.MFRATIO2%2CMFRATIO.MFRATIO10%2CSNAME%2CCODE%2CANNOUNMT%2CUVSNEWS&sort=LB&order=asc&count=4000&type=query'
     resp, content = http_request.request(url, "GET")
     json_content = json.loads(content)
     stock_list = json_content.get('list')
     print json_content.get('time')
     for i in stock_list:
         code = i['SYMBOL']
-        ratio = i.get('LB')
-        if ratio:
-            ratio = float(str(ratio)[:4])
+        change = i.get('PERCENT')
+        if change:
+            change = float(str(change)[:4])*100
         else:
-            ratio = 10000
-        quantity_relative_ratio[code] = ratio
-    print '163 quantity_relative ratio: ', len(quantity_relative_ratio)
+            change = 10000
+
+        turn_over = i.get('HS')
+        if turn_over:
+            turn_over = float(str(turn_over)[:4])*100
+        else:
+            turn_over = 10000
+
+        price = i.get('PRICE')
+        if price:
+            price = float(str(price))
+        else:
+            price = 10000
+
+        lb = i.get('LB')
+        if lb:
+            lb = float(str(lb)[:4])
+        else:
+            lb = 10000
+
+        pe = i.get('PE')
+        if pe:
+            pe = float(str(pe)[:4])
+        else:
+            pe = 10000
+
+        size = i.get('MCAP')
+        if size:
+            size = int(size/100000000)
+        else:
+            size = 10000
+        
+        stock_size[code] = size
+        pe_ratio[code] = pe
+        quantity_relative_ratio[code] = lb
+        turn_over_ratio[code] = turn_over
+        change_ratio[code] = change
+        price_now[code] = price
+    print '163 query: ', len(quantity_relative_ratio)
 
 def week_change_163():
     url = 'http://quotes.money.163.com/hs/realtimedata/service/rank.php?host=/hs/realtimedata/service/rank.php&page=0&query=LONG_PERIOD_RANK:_exists_&fields=SYMBOL,PRICE,LONG_PERIOD_RANK,PERCENT&sort=LONG_PERIOD_RANK.WEEK_PERCENT&order=asc&count=4000&type=query'
@@ -433,16 +470,17 @@ def check_manager_transaction(choice, lowest_detail=None):
                 i['P%'] = int(right / (right + left) *100)
                 i['TOR'] = turn_over_ratio.get(code, 10000)
                 i['LB'] = quantity_relative_ratio.get(code, 10000)
-                i['IF%'] = in_flow_ratio.get(code, 10000)
+               # i['IF%'] = in_flow_ratio.get(code, 10000)
                 i['NMC'] = stock_size.get(code, 0)
                 i['CH'] = change_ratio.get(code, 10000)
                 i['CH5'] = week_change.get(code, 10000)
                 i['CH30'] = month_change.get(code, 10000)
                 i['CH90'] = quarter_change.get(code, 10000)
+                i['PE'] = pe_ratio.get(code, 10000)
                 if price / price_hold < 2:
                     my_hold.append(i)
     table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
-                                    'Avg%', 'P%_now', 'TOR', 'LB', 'IF%','NMC', 'CH', 'CH5', 'CH30', 'CH90'])
+                                    'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
     # print "Sale stock today:"
     # for i in should_transaction:
     #     print i
@@ -478,6 +516,7 @@ def lowest_manager_sort(lowest_detail):
     lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in lowest_codes],key=lambda x:x['L%'])
     lowest = []
     for i in lowest_percent_sort:
+        code = i['code']
         # sale_price = i['price'] + (i['H'] - i['price'])/2
         # profit = int((sale_price / i['price'] -1)*100)
         price = i['price']
@@ -496,16 +535,15 @@ def lowest_manager_sort(lowest_detail):
         i['TOR'] = turn_over_ratio.get(i['code'], 10000)
         i['LB'] = quantity_relative_ratio.get(i['code'], 10000)
         # i['FL'] = rise_top.get(i['code'], -10000)
-        i['IF%'] = in_flow_ratio.get(i['code'], 10000)
+#        i['IF%'] = in_flow_ratio.get(i['code'], 10000)
         i['NMC'] = stock_size.get(i['code'], 0)
         i['CH'] = change_ratio.get(i['code'], 10000)
         i['CH5'] = week_change.get(i['code'], 10000)
         i['CH30'] = month_change.get(i['code'], 10000)
         i['CH90'] = quarter_change.get(i['code'], 10000)
+        i['PE'] = pe_ratio.get(code, 10000)
         # print json.dumps(i)
-        if i['Avg'] == 10000:
-            continue
-        if i['LB'] != 10000 and i['L%'] < 50 and i['P%'] > 25  and (i['LB'] > 2 or i['TOR'] > 7):
+        if i['LB'] != 10000 and i['TOR'] != 10000 and i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] < 61.8:
             #  and i['CH'] < 5 and i['CH'] > -5:
             # and i['Avg%'] < 20:
             # and i['P%'] > 20:
@@ -520,9 +558,18 @@ def lowest_manager_sort(lowest_detail):
     
    # lowest_100 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)[-20:]
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
-    
-    lowest_50 = sorted(lowest, key=lambda  x : x['L%'], reverse=False)
-    table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH', 'CH5', 'CH30', 'CH90'])
+    lenth = int(len(lowest)/6.18)
+    print lenth
+    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
+    lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth]
+    lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)[:lenth]
+    #lowest_L = sorted(lowest, key=lambda  x : x['L%'], reverse=True)[:lenth]
+    code_TOR = [j['code'] for j in lowest_TOR]
+    code_LB = [k['code'] for k in lowest_LB]
+    #code_L = [k['code'] for k in lowest_L]
+    best = [i for i in lowest_P if i['code'] in code_TOR and i['code'] in code_LB]
+    print len(best)
+    table_util.print_list(best, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
 
 
 
@@ -562,8 +609,8 @@ def today_transaction():
     #new_manager_buy = list(set(record_709 + manager_buy_codes))
     #manager_top(MANAGER_SALE, 30)
     
-    stock_size_sina()
-    in_flow_sina()
+    #stock_size_sina()
+    #in_flow_sina()
     #turn_over_sina()
     quantity_relative_ratio_163()
     week_change_163()
