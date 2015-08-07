@@ -478,10 +478,16 @@ def lowest_manager_sort(lowest_detail):
     lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in lowest_codes],key=lambda x:x['L%'])
     lowest = []
     for i in lowest_percent_sort:
-        sale_price = i['price'] + (i['H'] - i['price'])/2
-        profit = int((sale_price / i['price'] -1)*100)
-        i['sale'] = sale_price
-        i['P%'] = profit
+        # sale_price = i['price'] + (i['H'] - i['price'])/2
+        # profit = int((sale_price / i['price'] -1)*100)
+        price = i['price']
+        left = price - i['L']
+        right = i['H'] - price
+        i['P%'] = 10000
+        if right + left:
+            i['P%'] = int(right / (right + left) *100)
+        # i['sale'] = sale_price
+        # i['P%'] = profit
         # i['MB'] = manager_buy.get(i['code'], 10000)
         # i['MS'] = manager_sale.get(i['code'], 10000)
         # i['MTP'] = manager_5days_buy_dict[i['code']]['total_price']
