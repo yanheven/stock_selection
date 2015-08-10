@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*import json
 import datetime
-import re
 import json
+import re
+import sys
 
 from utils import http_request
 from utils import table_util
@@ -432,7 +433,12 @@ def check_manager_transaction(choice, lowest_detail=None):
             # print line['code']
             hold_codes.append(line['code'])
             hold_detail.append(line)
-
+    with open('candidate.txt', 'r') as fb:
+        lines = fb.readlines()
+        for i in lines:
+            code = i.split()[1]
+            hold_codes.append(code)
+            hold_detail.append({'code':code})
     # should_transaction = set(hold_codes) & set(manager_codes)
     # if choice == 1:
     #     # print 'Manager buy num : %d' % len(manager_codes)
@@ -451,7 +457,7 @@ def check_manager_transaction(choice, lowest_detail=None):
         for j in hold_detail:
             if code == j['code']:
                 lowest = i['L']
-                price_hold = j['price']
+                price_hold = j.get('price', 10000)
                 price = price_now.get(code, 10000)
                 i['price'] = price
                 lowest_percent_now = int(float(price - lowest) * 100 /  lowest)
@@ -556,7 +562,9 @@ def lowest_manager_sort(lowest_detail):
     
    # lowest_100 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)[-20:]
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
-    lenth = int(len(lowest)/6.18)
+    #lenth = int(len(lowest)/6.18)
+    total = 3
+    lenth = int(len(lowest)/total)
     print lenth
     #print lowest[-1]['L']
     lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
