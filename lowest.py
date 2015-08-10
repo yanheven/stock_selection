@@ -208,6 +208,13 @@ def lowest_goole():
           '2016400%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29%20%26%20%28' \
           'average_50day_price%20%3E%3D%200%29%20%26%20%28average_50day_price%20%3C%3D%20185%29]' \
           '&restype=company&ei=9MmoVdmyK4n3jAGdhIL4Cg&gl=cn&sortas=Price52WeekPercChange&desc=1'
+    url2 = 'https://www.google.com.hk/finance?output=json&num=500&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22' \
+          '%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-99%29%20%' \
+          '26%20%28price_change_52week%20%3C%3D%20964%29%20%26%20%28high_52week%20%3E%3D%200%29%20%26%20%28high_52week' \
+          '%20%3C%3D%2022599.999999999996%29%20%26%20%28pe_ratio%20%3E%3D%200%29%20%26%20%28pe_ratio%20%3C%3D%2061.8'\
+          '%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29%20%26%20%28' \
+          'average_50day_price%20%3E%3D%200%29%20%26%20%28average_50day_price%20%3C%3D%20185%29]' \
+          '&restype=company&ei=9MmoVdmyK4n3jAGdhIL4Cg&gl=cn&sortas=Price52WeekPercChange&desc=1'
     # encode_url = 'output=json&start=0&num=20&noIL=1&q=[((exchange == "SHE") | ' \
     #       '(exchange == "SHA")) & (price_change_52week >= -67.69) & (price_change_52week <= 964) & (high_52week >= 0)' \
     #       ' & (high_52week <= 22599.999999999996) & (last_price >= 0) & (last_price <= 16400) & (low_52week >= 0) &' \
@@ -546,7 +553,7 @@ def lowest_manager_sort(lowest_detail):
         i['CH90'] = quarter_change.get(i['code'], 10000)
         i['PE'] = pe_ratio.get(code, 10000)
         # print json.dumps(i)
-        if i['LB'] != 10000 and i['TOR'] != 10000 and i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] < 61.8:
+        if i['LB'] != 10000 and i['TOR'] != 10000 and i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] < 100:
             #  and i['CH'] < 5 and i['CH'] > -5:
             # and i['Avg%'] < 20:
             # and i['P%'] > 20:
@@ -563,12 +570,14 @@ def lowest_manager_sort(lowest_detail):
    # lowest_100 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)[-20:]
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
     #lenth = int(len(lowest)/6.18)
-    total = 3
+    total = 4
+    total2 = total - 1
     lenth = int(len(lowest)/total)
+    lenth2 = int(len(lowest)/total2)
     print lenth
     #print lowest[-1]['L']
     lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
-    lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth]
+    lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth2]
     lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)[:lenth]
     #lowest_L = sorted(lowest, key=lambda  x : x['L%'], reverse=True)[:lenth]
     code_TOR = [j['code'] for j in lowest_TOR]
