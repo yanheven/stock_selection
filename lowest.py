@@ -330,7 +330,7 @@ def quantity_relative_ratio_163():
         code = i['SYMBOL']
         change = i.get('PERCENT')
         if change:
-            change = float(str(change)[:4])*100
+            change = float(str(change)[:2])*100
         else:
             change = 10000
 
