@@ -241,11 +241,8 @@ def lowest_goole():
 
             except Exception as e:
                 highest = 10000
-            try:
-                quotelast = float(columns[-3]['value'])
-            except Exception as e:
-                quotelast = 10000
-            if quotelast !=0:
+            quotelast = price_now.get(code,0)
+            if quotelast !=0 and quotelast < 100:
                 try:
                     low52week = float(columns[-2]['value'])
                 except Exception as e:
@@ -254,12 +251,12 @@ def lowest_goole():
                     avg_200 = float(columns[-1]['value'])
                 except Exception as e:
                     avg_200 = 10000
+                if low52week > 100 or highest > 500:
+                    continue
                 lowest_percent = int(quotelast / low52week * 100 -100)
                 avg_200_percent = int(quotelast / avg_200 * 100 -100)
                 d = {'code':code, 'L': low52week, 'price': quotelast, 'H': highest, 'change_last_year': change,
                      'L%': lowest_percent, 'Avg%': avg_200_percent, 'Avg': avg_200}
-                if code == '000895':
-                    d['H'] = 27.58
                 # print d, int(float(quotelast - low52week)/quotelast * 100)
                 detail.append(d)
                 codes.append(code)
@@ -549,8 +546,9 @@ def lowest_manager_sort(lowest_detail):
             # and i['P%'] > 20:
             # and i['MB'] != 10000 i['TOR'] != 10000 and  :
             # and i['price'] /i['MB'] < 1.2:
-
+      #      print i['L']
             lowest.append(i)
+     #       print lowest[-1]['L']
         #         lowest_50.append(i)
 
  #   lowest_50 = sorted(lowest_50, key=lambda  x : x['L%'], reverse=True)
@@ -560,16 +558,21 @@ def lowest_manager_sort(lowest_detail):
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
     lenth = int(len(lowest)/6.18)
     print lenth
+    #print lowest[-1]['L']
     lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
     lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth]
     lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)[:lenth]
     #lowest_L = sorted(lowest, key=lambda  x : x['L%'], reverse=True)[:lenth]
     code_TOR = [j['code'] for j in lowest_TOR]
     code_LB = [k['code'] for k in lowest_LB]
-    #code_L = [k['code'] for k in lowest_L]
+    #code_L = [k['code'] for k in lowest_L]A
+   # print lowest_P[0]['L']
+   # print lowest_TOR[0]['L']
+   # print lowest_LB[0]['L']
     best = [i for i in lowest_P if i['code'] in code_TOR and i['code'] in code_LB]
     print len(best)
-    table_util.print_list(best, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+    #print best[-1]['L']
+    table_util.print_list(best, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
 
 
 
@@ -601,6 +604,8 @@ def bug_lowest_in_this_year(lowest_detail, percent):
     print '#' * 40 +'\n'
 
 def today_transaction():
+    
+    quantity_relative_ratio_163()
     #drop_east()
     #rise_east()
     lowest_detail = lowest_goole()
@@ -612,7 +617,6 @@ def today_transaction():
     #stock_size_sina()
     #in_flow_sina()
     #turn_over_sina()
-    quantity_relative_ratio_163()
     week_change_163()
     lowest_manager_sort(lowest_detail)
     # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
