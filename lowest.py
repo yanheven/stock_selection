@@ -25,6 +25,7 @@ week_change = {}
 month_change = {}
 quarter_change = {}
 pe_ratio = {}
+hot_code = []
 # P for profit
 # Avg for average
 # L for lowest
@@ -335,31 +336,31 @@ def quantity_relative_ratio_163():
         code = i['SYMBOL']
         change = i.get('PERCENT')
         if change:
-            change = float(str(change)[:5])*100
+            change = int(change*1000)/10.0
         else:
             change = 10000
 
         turn_over = i.get('HS')
         if turn_over:
-            turn_over = float(str(turn_over)[:4])*100
+            turn_over = int(turn_over*1000)/10.0
         else:
             turn_over = 10000
 
         price = i.get('PRICE')
         if price:
-            price = float(str(price))
+            price = int(price*10)/10.0
         else:
             price = 10000
 
         lb = i.get('LB')
         if lb:
-            lb = float(str(lb)[:4])
+            lb = int(lb*10)/10.0
         else:
             lb = 10000
 
         pe = i.get('PE')
         if pe:
-            pe = float(str(pe)[:4])
+            pe=int(pe)
         else:
             pe = 10000
 
@@ -571,27 +572,37 @@ def lowest_manager_sort(lowest_detail):
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
     #lenth = int(len(lowest)/6.18)
     total = 4
-    total2 = total - 1
+    total2 = total - 2
     lenth = int(len(lowest)/total)
     lenth2 = int(len(lowest)/total2)
     print lenth
     #print lowest[-1]['L']
-    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
+    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth2]
     lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth2]
-    lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)[:lenth]
+    lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)
     #lowest_L = sorted(lowest, key=lambda  x : x['L%'], reverse=True)[:lenth]
     code_TOR = [j['code'] for j in lowest_TOR]
-    code_LB = [k['code'] for k in lowest_LB]
-    #code_L = [k['code'] for k in lowest_L]A
+    #code_LB = [k['code'] for k in lowest_LB]
+    code_P = [k['code'] for k in lowest_P]
    # print lowest_P[0]['L']
    # print lowest_TOR[0]['L']
    # print lowest_LB[0]['L']
-    best = [i for i in lowest_P if i['code'] in code_TOR and i['code'] in code_LB]
-    print len(best)
+    best = [i for i in lowest_LB if i['code'] in code_TOR and i['code'] in code_P]
+    #best = lowest_LB
+    lenth = len(best)
+    if lenth > 10:
+        best = best[:10]
     #print best[-1]['L']
     table_util.print_list(best, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+    hot_lowest = [i for i in lowest if i['code'] in hot_code]
+    table_util.print_list(hot_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
 
-
+def get_hot_baidu():
+    with open('hot.txt', 'r') as fb:
+        lines = fb.readlines()
+        for i in lines:
+            code = i.strip()  
+            hot_code.append(code)
 
 def buy_lowest_manager_hold(lowest_detail, manager_buy_codes):
 
@@ -635,6 +646,7 @@ def today_transaction():
     #in_flow_sina()
     #turn_over_sina()
     week_change_163()
+    get_hot_baidu()
     lowest_manager_sort(lowest_detail)
     # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
     # buy_lowest_manager_5day_hold(lowest_detail, manager_5day_buy_codes)
