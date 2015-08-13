@@ -3,6 +3,7 @@ import datetime
 import json
 import re
 import sys
+import itertools
 
 from utils import http_request
 from utils import table_util
@@ -26,6 +27,9 @@ month_change = {}
 quarter_change = {}
 pe_ratio = {}
 hot_code = []
+bull_code = []
+b_point_code = []
+short_code = []
 # P for profit
 # Avg for average
 # L for lowest
@@ -306,6 +310,52 @@ def in_flow_sina():
     print 'sina turn over ratio: ', len(turn_over_ratio)
     print 'sina in flow ratio: ', len(in_flow_ratio)
 
+def bull_sina():
+    url = 'http://vip.stock.finance.sina.com.cn/q/go.php/vIR_Burstout/index.phtml'
+    resp, content = http_request.request(url, 'GET')
+    start = content.find('var STR_HX_CODE = ') + 18
+    end = content.find('\n', start) - 1
+    content = content[start:end]
+    try:
+        codes = json.loads(content)
+    except Exception as e:
+        print 'get bull codes error'
+    bull_code = [i[2:] for i in codes]
+    print 'bull codes:',len(bull_code)
+
+def b_point_sina():
+    global b_point_code
+    urls = ['http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/bdmr/index.phtml?p=', \
+     #      'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/dxcj/index.phtml?p=']
+     #      'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/kdfp/index.phtml?p=', \
+            'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/kpjc/index.phtml?p=']
+    for url in urls:      
+        for i in range(1,100):
+            page_url = url + str(i)
+            resp, content = http_request.request(page_url, 'GET')
+            if 'php?q=' not in content:
+                break
+            code_str = content.split('php?q=')
+            for i in code_str[1::2]:
+                b_point_code.append(i[:6])
+    print 'b point sina:', len(b_point_code)
+
+def short_sina():
+    global b_point_code
+    urls = ['http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/dxcj/index.phtml?p=']
+         #  'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/kdfp/index.phtml?p=', \
+          # 'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/dpjc/index.phtml?p=']
+    for url in urls:
+        for i in range(1,100):
+            page_url = url + str(i)
+            resp, content = http_request.request(page_url, 'GET')
+            if 'php?q=' not in content:
+                break
+            code_str = content.split('php?q=')
+            for i in code_str[1::2]:
+                short_code.append(i[:6])
+    print 'short line sina:', len(short_code)
+
 def stock_size_sina():
     url = "http://money.finance.sina.com.cn/quotes_service/api/jsonp_v2.php/IO.XSRV2.CallbackList['b4VIm$HArIJ1qfKO']/Market_Center.getHQNodeDataNew?page=1&num=5000&sort=nmc&asc=0&node=hs_a"
     resp, content = http_request.request(url, "GET")
@@ -492,6 +542,10 @@ def check_manager_transaction(choice, lowest_detail=None):
                     my_hold.append(i)
     table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
                                     'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+    short = bull_code + b_point_code
+    keep = [i for i in my_hold if i['code'] in short]
+    table_util.print_list(keep, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
+                                    'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
     # print "Sale stock today:"
     # for i in should_transaction:
     #     print i
@@ -554,7 +608,8 @@ def lowest_manager_sort(lowest_detail):
         i['CH90'] = quarter_change.get(i['code'], 10000)
         i['PE'] = pe_ratio.get(code, 10000)
         # print json.dumps(i)
-        if i['LB'] != 10000 and i['TOR'] != 10000 and i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] < 100:
+        if i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] <100 and i['P%'] > 50:
+            # i['LB'] != 10000 and i['TOR'] != 10000 and
             #  and i['CH'] < 5 and i['CH'] > -5:
             # and i['Avg%'] < 20:
             # and i['P%'] > 20:
@@ -571,31 +626,61 @@ def lowest_manager_sort(lowest_detail):
    # lowest_100 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)[-20:]
    # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
     #lenth = int(len(lowest)/6.18)
+    '''
     total = 4
     total2 = total - 2
     lenth = int(len(lowest)/total)
     lenth2 = int(len(lowest)/total2)
     print lenth
     #print lowest[-1]['L']
-    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth2]
-    lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth2]
-    lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)
+    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
+    lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth]
+    lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)[:lenth]
+    lowest_CH5 = sorted(lowest, key=lambda  x : x['CH5'])[:lenth2]
     #lowest_L = sorted(lowest, key=lambda  x : x['L%'], reverse=True)[:lenth]
     code_TOR = [j['code'] for j in lowest_TOR]
     #code_LB = [k['code'] for k in lowest_LB]
     code_P = [k['code'] for k in lowest_P]
+    code_CH5 = [i['code'] for i in lowest_CH5]
    # print lowest_P[0]['L']
    # print lowest_TOR[0]['L']
    # print lowest_LB[0]['L']
-    best = [i for i in lowest_LB if i['code'] in code_TOR and i['code'] in code_P]
+    best = [i for i in lowest_LB if i['code'] in code_TOR and i['code'] in code_P and i['code'] in code_CH5]
+    best = sorted(best, key=lambda x : x['CH'])
     #best = lowest_LB
     lenth = len(best)
     if lenth > 10:
-        best = best[:10]
+        best = best[:5]
     #print best[-1]['L']
     table_util.print_list(best, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
-    hot_lowest = [i for i in lowest if i['code'] in hot_code]
-    table_util.print_list(hot_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+   # hot_lowest = [i for i in lowest if i['code'] in hot_code]
+   # table_util.print_list(hot_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+    #if bull_code: '''
+    print 'lowest lehth',len(lowest)
+#    three_codes = [i for i in b_point_code if i in bull_code and i in short_code]
+    b_short_codes = [i for i in b_point_code if i in short_code]
+#    print b_short_codes
+#    b_bull_codes = [i for i in b_point_code if i in bull_code]
+#    bull_short_codes = [i for i in bull_code if i in short_code]
+#    two_codes = set(b_short_codes + b_bull_codes +bull_short_codes)
+    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)
+#    if tree_codes:
+#        sina_lowest = [i for i in lowest_P if i['code'] in three_codes]
+#        print 'three match'
+#    elif:
+#        sina_lowest = [i for i in lowest_P if i['code'] in two_codes]
+#        print 'two match'
+    flag = False
+    if b_short_codes:
+        sina_lowest = [i for i in lowest_P if i['code'] in b_short_codes]
+        if sina_lowest:
+            print 'two match'
+            flag = True
+    if 1:
+        combine = list(set(b_point_code))
+        print 'sina lowest lenth',len(combine)
+        sina_lowest = [i for i in lowest_P if i['code'] in combine]
+    table_util.print_list(sina_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
 
 def get_hot_baidu():
     with open('hot.txt', 'r') as fb:
@@ -632,7 +717,9 @@ def bug_lowest_in_this_year(lowest_detail, percent):
     print '#' * 40 +'\n'
 
 def today_transaction():
-    
+    short_sina()
+    b_point_sina()
+    #bull_sina()
     quantity_relative_ratio_163()
     #drop_east()
     #rise_east()
