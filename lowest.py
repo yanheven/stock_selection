@@ -696,7 +696,7 @@ def read_lowest_google():
     with open('lowest_google.txt','r') as fb:
         lines = fb.readlines()[0]
         lowest_google_detail = json.loads(lines)
-        
+        print 'google lowest:', len(lowest_google_detail)       
 
         
 def today_transaction():
