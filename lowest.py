@@ -30,6 +30,8 @@ hot_code = []
 bull_code = []
 b_point_code = []
 short_code = []
+open_price = {}
+lowest_google_detail = []
 # P for profit
 # Avg for average
 # L for lowest
@@ -211,8 +213,9 @@ def lowest_goole():
           '26%20%28price_change_52week%20%3C%3D%20964%29%20%26%20%28high_52week%20%3E%3D%200%29%20%26%20%28high_52week' \
           '%20%3C%3D%2022599.999999999996%29%20%26%20%28last_price%20%3E%3D%200%29%20%26%20%28last_price%20%3C%3D%' \
           '2016400%29%20%26%20%28low_52week%20%3E%3D%200%29%20%26%20%28low_52week%20%3C%3D%208834%29%20%26%20%28' \
-          'average_50day_price%20%3E%3D%200%29%20%26%20%28average_50day_price%20%3C%3D%20185%29]' \
+          'average_200day_price%20%3E%3D%200%29%20%26%20%28average_200day_price%20%3C%3D%20185%29]' \
           '&restype=company&ei=9MmoVdmyK4n3jAGdhIL4Cg&gl=cn&sortas=Price52WeekPercChange&desc=1'
+
     url2 = 'https://www.google.com.hk/finance?output=json&num=500&noIL=1&q=[%28%28exchange%20%3D%3D%20%22SHE%22' \
           '%29%20%7C%20%28exchange%20%3D%3D%20%22SHA%22%29%29%20%26%20%28price_change_52week%20%3E%3D%20-99%29%20%' \
           '26%20%28price_change_52week%20%3C%3D%20964%29%20%26%20%28high_52week%20%3E%3D%200%29%20%26%20%28high_52week' \
@@ -229,7 +232,6 @@ def lowest_goole():
     # url = urllib.urlencode(url)
     http_client = http_request
     codes = []
-    detail = []
     for i in range(0, 3300, 500):
         start = str(i)
         new_rul = url + '&start=' + start
@@ -254,7 +256,7 @@ def lowest_goole():
 
             except Exception as e:
                 highest = 10000
-            quotelast = price_now.get(code,0)
+            quotelast = 1
             if quotelast !=0 and quotelast < 100:
                 try:
                     low52week = float(columns[-2]['value'])
@@ -266,16 +268,14 @@ def lowest_goole():
                     avg_200 = 10000
                 if low52week > 100 or highest > 500:
                     continue
-                lowest_percent = int(quotelast / low52week * 100 -100)
-                avg_200_percent = int(quotelast / avg_200 * 100 -100)
-                d = {'code':code, 'L': low52week, 'price': quotelast, 'H': highest, 'change_last_year': change,
-                     'L%': lowest_percent, 'Avg%': avg_200_percent, 'Avg': avg_200}
+                #lowest_percent = int(quotelast / low52week * 100 -100)
+                #avg_200_percent = int(quotelast / avg_200 * 100 -100)
+                d = {'code':code, 'L': low52week, 'H': highest, 'change_last_year': change, 'Avg': avg_200}
                 # print d, int(float(quotelast - low52week)/quotelast * 100)
-                detail.append(d)
+                lowest_google_detail.append(d)
                 codes.append(code)
 
     print 'google lowest: ', len(set(codes))
-    return detail
 
 def turn_over_sina():
     url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1' \
@@ -320,14 +320,15 @@ def bull_sina():
         codes = json.loads(content)
     except Exception as e:
         print 'get bull codes error'
+    global bull_code
     bull_code = [i[2:] for i in codes]
     print 'bull codes:',len(bull_code)
 
 def b_point_sina():
     global b_point_code
     urls = ['http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/bdmr/index.phtml?p=', \
-     #      'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/dxcj/index.phtml?p=']
-     #      'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/kdfp/index.phtml?p=', \
+           'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/dxcj/index.phtml?p=', \
+           'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/kdfp/index.phtml?p=', \
             'http://vip.stock.finance.sina.com.cn/q/go.php/vDYData/kind/kpjc/index.phtml?p=']
     for url in urls:      
         for i in range(1,100):
@@ -420,6 +421,22 @@ def quantity_relative_ratio_163():
         else:
             size = 10000
         
+        open = i.get('OPEN')
+        if open:
+            open = float(open)
+        else:
+            open = 10000
+
+        close = i.get('YESTCLOSE')
+        if close:
+            close = float(close)
+        else:
+            close = 10000
+        
+        if open !=10000 and close != 10000:
+            open = int((open-close)/close*100)
+
+        open_price[code] = open
         stock_size[code] = size
         pe_ratio[code] = pe
         quantity_relative_ratio[code] = lb
@@ -448,7 +465,11 @@ def filte_lowest_from_google(detail, persent=None):
     lowest_codes = []
     if persent:
         for i in detail:
-            price = float(i['price'])
+            code = i['code']
+            price = price_now.get(code)
+            if not price:
+                continue
+            i['price'] = price
             lowest = float(i['L'])
             if (price - lowest) < lowest*persent/100:
                 lowest_codes.append(i['code'])
@@ -477,7 +498,7 @@ def check_reopen(manager_codes, lowest_detail):
                 print i
 
 
-def check_manager_transaction(choice, lowest_detail=None):
+def check_manager_transaction(choice):
     # choice 1 for buy, 2 for sale
     # check manager sale, we sale
     # manager_codes would be sale or buy codes
@@ -510,7 +531,7 @@ def check_manager_transaction(choice, lowest_detail=None):
     #     print 'Manager sales num : %d' % len(manager_codes)
     # print 'My hold: %s\n' % hold_codes
     my_hold = []
-    for i in lowest_detail:
+    for i in lowest_google_detail:
         code = i['code']
         for j in hold_detail:
             if code == j['code']:
@@ -519,7 +540,9 @@ def check_manager_transaction(choice, lowest_detail=None):
                 price = price_now.get(code, 10000)
                 i['price'] = price
                 lowest_percent_now = int(float(price - lowest) * 100 /  lowest)
-                i['L%_now'] = lowest_percent_now
+                i['L%'] = lowest_percent_now
+                avg_200_percent = int(price / i['Avg'] * 100 -100)
+                i['Avg%'] = avg_200_percent
                 profit_now = int((price / price_hold) *100 -100)
                 i['P%_now'] = profit_now
                 # sale_price = price_hold + (i['H'] - price_hold)/2
@@ -538,10 +561,11 @@ def check_manager_transaction(choice, lowest_detail=None):
                 i['CH30'] = month_change.get(code, 10000)
                 i['CH90'] = quarter_change.get(code, 10000)
                 i['PE'] = pe_ratio.get(code, 10000)
+                i['OPEN'] = open_price.get(code, 10000)
                 if price / price_hold < 2:
                     my_hold.append(i)
     table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
-                                    'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+                                    'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'OPEN', 'PE'])
     short = bull_code + b_point_code
     keep = [i for i in my_hold if i['code'] in short]
     table_util.print_list(keep, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
@@ -575,21 +599,28 @@ def lowest_persentage(lowest_detail, manager_buy_codes=None, percent=None, detai
     print '#' * 40 +'\n'
 
 
-def lowest_manager_sort(lowest_detail):
-    lowest_codes = filte_lowest_from_google(lowest_detail)
+def lowest_manager_sort():
+    #lowest_codes = filte_lowest_from_google(lowest_detail)
     # best = list(set(manager_buy_codes) & set(lowest_codes))
-    lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in lowest_codes],key=lambda x:x['L%'])
+    #lowest_percent_sort = sorted([i for i in lowest_detail if i['code'] in lowest_codes],key=lambda x:x['L%'])
     lowest = []
-    for i in lowest_percent_sort:
+    
+    for i in lowest_google_detail:
         code = i['code']
         # sale_price = i['price'] + (i['H'] - i['price'])/2
         # profit = int((sale_price / i['price'] -1)*100)
-        price = i['price']
+        low = i['L']
+        price = price_now.get(code, 10000)
+        i['price'] = price
+        lowest_percent_now = int(float(price - low) * 100 /  low)
+        i['L%'] = lowest_percent_now
+        avg_200_percent = int(price / i['Avg'] * 100 -100)
+        i['Avg%'] = avg_200_percent
         left = price - i['L']
         right = i['H'] - price
         i['P%'] = 10000
         if right + left:
-            i['P%'] = int(right / (right + left) *100)
+            i['P%'] = int(right / price *100)
         # i['sale'] = sale_price
         # i['P%'] = profit
         # i['MB'] = manager_buy.get(i['code'], 10000)
@@ -607,8 +638,9 @@ def lowest_manager_sort(lowest_detail):
         i['CH30'] = month_change.get(i['code'], 10000)
         i['CH90'] = quarter_change.get(i['code'], 10000)
         i['PE'] = pe_ratio.get(code, 10000)
+        i['OPEN'] = open_price.get(code, 10000)
         # print json.dumps(i)
-        if i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] <100 and i['P%'] > 50:
+     #   if i['P%'] != 10000 and i['L%'] < 61.8 and i['PE'] > 0 and i['PE'] <100 and i['P%'] > 50:
             # i['LB'] != 10000 and i['TOR'] != 10000 and
             #  and i['CH'] < 5 and i['CH'] > -5:
             # and i['Avg%'] < 20:
@@ -616,71 +648,14 @@ def lowest_manager_sort(lowest_detail):
             # and i['MB'] != 10000 i['TOR'] != 10000 and  :
             # and i['price'] /i['MB'] < 1.2:
       #      print i['L']
-            lowest.append(i)
+        lowest.append(i)
      #       print lowest[-1]['L']
         #         lowest_50.append(i)
 
- #   lowest_50 = sorted(lowest_50, key=lambda  x : x['L%'], reverse=True)
- #   table_util.print_list(lowest_50, ['code', 'L%', 'P%', 'price', 'Avg%', 'MB', 'MS', 'TOR', 'LB'])
-    
-   # lowest_100 = sorted(lowest, key=lambda  x : x['LB'], reverse=False)[-20:]
-   # table_util.print_list(lowest_100, ['code', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'IF%', 'NMC', 'CH'])
-    #lenth = int(len(lowest)/6.18)
-    '''
-    total = 4
-    total2 = total - 2
-    lenth = int(len(lowest)/total)
-    lenth2 = int(len(lowest)/total2)
-    print lenth
-    #print lowest[-1]['L']
-    lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)[:lenth]
-    lowest_TOR = sorted(lowest, key=lambda  x : x['TOR'], reverse=True)[:lenth]
-    lowest_LB = sorted(lowest, key=lambda  x : x['LB'], reverse=True)[:lenth]
-    lowest_CH5 = sorted(lowest, key=lambda  x : x['CH5'])[:lenth2]
-    #lowest_L = sorted(lowest, key=lambda  x : x['L%'], reverse=True)[:lenth]
-    code_TOR = [j['code'] for j in lowest_TOR]
-    #code_LB = [k['code'] for k in lowest_LB]
-    code_P = [k['code'] for k in lowest_P]
-    code_CH5 = [i['code'] for i in lowest_CH5]
-   # print lowest_P[0]['L']
-   # print lowest_TOR[0]['L']
-   # print lowest_LB[0]['L']
-    best = [i for i in lowest_LB if i['code'] in code_TOR and i['code'] in code_P and i['code'] in code_CH5]
-    best = sorted(best, key=lambda x : x['CH'])
-    #best = lowest_LB
-    lenth = len(best)
-    if lenth > 10:
-        best = best[:5]
-    #print best[-1]['L']
-    table_util.print_list(best, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
-   # hot_lowest = [i for i in lowest if i['code'] in hot_code]
-   # table_util.print_list(hot_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
-    #if bull_code: '''
-    print 'lowest lehth',len(lowest)
-#    three_codes = [i for i in b_point_code if i in bull_code and i in short_code]
-    b_short_codes = [i for i in b_point_code if i in short_code]
-#    print b_short_codes
-#    b_bull_codes = [i for i in b_point_code if i in bull_code]
-#    bull_short_codes = [i for i in bull_code if i in short_code]
-#    two_codes = set(b_short_codes + b_bull_codes +bull_short_codes)
     lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)
-#    if tree_codes:
-#        sina_lowest = [i for i in lowest_P if i['code'] in three_codes]
-#        print 'three match'
-#    elif:
-#        sina_lowest = [i for i in lowest_P if i['code'] in two_codes]
-#        print 'two match'
-    flag = False
-    if b_short_codes:
-        sina_lowest = [i for i in lowest_P if i['code'] in b_short_codes]
-        if sina_lowest:
-            print 'two match'
-            flag = True
-    if 1:
-        combine = list(set(b_point_code))
-        print 'sina lowest lenth',len(combine)
-        sina_lowest = [i for i in lowest_P if i['code'] in combine]
-    table_util.print_list(sina_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+    sina_codes = list(set(bull_code + b_point_code))
+    sina_lowest = [i for i in lowest_P if i['code'] in bull_code and  i['L%'] < 100 and i['P%']>30]# and i['OPEN'] < 3 and i['OPEN'] > -3 and i['CH5']<10 and i['CH5']>0]
+    table_util.print_list(sina_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE', 'OPEN'])
 
 def get_hot_baidu():
     with open('hot.txt', 'r') as fb:
@@ -716,14 +691,22 @@ def bug_lowest_in_this_year(lowest_detail, percent):
             print json.dumps(j)
     print '#' * 40 +'\n'
 
+def read_lowest_google():
+    global lowest_google_detail
+    with open('lowest_google.txt','r') as fb:
+        lines = fb.readlines()[0]
+        lowest_google_detail = json.loads(lines)
+        
+
+        
 def today_transaction():
-    short_sina()
-    b_point_sina()
-    #bull_sina()
-    quantity_relative_ratio_163()
+    read_lowest_google()
+    #short_sina()
+    #b_point_sina()
+    bull_sina()
     #drop_east()
     #rise_east()
-    lowest_detail = lowest_goole()
+    #lowest_goole()
     # manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
     # manager_buy_codes, manager_buy_dict = manager_top(MANAGER_BUY)
     #new_manager_buy = list(set(record_709 + manager_buy_codes))
@@ -733,14 +716,15 @@ def today_transaction():
     #in_flow_sina()
     #turn_over_sina()
     week_change_163()
-    get_hot_baidu()
-    lowest_manager_sort(lowest_detail)
+    #get_hot_baidu()
+    quantity_relative_ratio_163()
+    lowest_manager_sort()
     # buy_lowest_manager_hold(lowest_detail, new_manager_buy)
     # buy_lowest_manager_5day_hold(lowest_detail, manager_5day_buy_codes)
     # bug_lowest_in_this_year(lowest_detail,10)
     ##manager_sale_codes, manager_sale_dict = manager_top(MANAGER_SALE)
     #check_manager_transaction(MANAGER_BUY, manager_buy_codes)
-    check_manager_transaction(MANAGER_SALE, lowest_detail)
+    check_manager_transaction(MANAGER_SALE)
     # check_reopen(new_manager_buy, lowest_detail)
 
 
