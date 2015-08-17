@@ -321,7 +321,7 @@ def bull_sina():
     except Exception as e:
         print 'get bull codes error'
     global bull_code
-    bull_code = [i[2:] for i in codes]
+    bull_code = [i[2:] for i in codes if not i[2:].startswith('3')]
     print 'bull codes:',len(bull_code)
 
 def b_point_sina():
