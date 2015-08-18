@@ -32,6 +32,7 @@ b_point_code = []
 short_code = []
 open_price = {}
 lowest_google_detail = []
+sgcx_code = []
 # P for profit
 # Avg for average
 # L for lowest
@@ -461,6 +462,20 @@ def week_change_163():
         quarter_change[code] = qua_change
 
 
+def sgcx_tencent():
+    url = ['http://smartstock.gtimg.cn/get.php?_func=zhibiao&_default=1&_page=1&_pagesize=30&zhibiao=hs_sgcx', \
+           'http://smartstock.gtimg.cn/get.php?_func=zhibiao&_default=1&_page=1&_pagesize=30&zhibiao=hs_cjdx']
+    for i in url:
+        resp, content = http_request.request(i, "GET")
+        content = content[16:]
+        json_content = json.loads(content)
+        data = json_content.get('data')
+        for i in data:
+            sgcx_code.append(i['code'][2:])
+    print 'sgcx from tencent lenth:', len(sgcx_code)
+
+
+
 def filte_lowest_from_google(detail, persent=None):
     lowest_codes = []
     if persent:
@@ -564,12 +579,13 @@ def check_manager_transaction(choice):
                 i['OPEN'] = open_price.get(code, 10000)
                 if price / price_hold < 2:
                     my_hold.append(i)
+    print 'my hold stock:'
     table_util.print_list(my_hold, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
                                     'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'OPEN', 'PE'])
-    short = bull_code + b_point_code
-    keep = [i for i in my_hold if i['code'] in short]
-    table_util.print_list(keep, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
-                                    'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
+    #short = bull_code + b_point_code
+    #keep = [i for i in my_hold if i['code'] in short]
+    #table_util.print_list(keep, ['code', 'L%', 'P%', 'L', 'price', 'H', 'sale',
+    #                                'Avg%', 'P%_now', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE'])
     # print "Sale stock today:"
     # for i in should_transaction:
     #     print i
@@ -653,9 +669,14 @@ def lowest_manager_sort():
         #         lowest_50.append(i)
 
     lowest_P = sorted(lowest, key=lambda  x : x['P%'], reverse=True)
+    print 'bull stock from sina:'
     sina_codes = list(set(bull_code + b_point_code))
     sina_lowest = [i for i in lowest_P if i['code'] in bull_code and  i['L%'] < 100 and i['P%']>30]# and i['OPEN'] < 3 and i['OPEN'] > -3 and i['CH5']<10 and i['CH5']>0]
     table_util.print_list(sina_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE', 'OPEN'])
+    print 'sgcx from tencent:'
+    tencent_lowest = [i for i in lowest_P if i['code'] in sgcx_code and  i['L%'] < 100 and i['P%']>30]
+    table_util.print_list(tencent_lowest, ['code', 'L', 'L%', 'P%', 'price', 'Avg%', 'TOR', 'LB', 'NMC', 'CH', 'CH5', 'CH30', 'CH90', 'PE', 'OPEN'])
+    
 
 def get_hot_baidu():
     with open('hot.txt', 'r') as fb:
@@ -704,6 +725,7 @@ def today_transaction():
     #short_sina()
     #b_point_sina()
     bull_sina()
+    sgcx_tencent()
     #drop_east()
     #rise_east()
     #lowest_goole()
