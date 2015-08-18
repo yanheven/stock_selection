@@ -551,7 +551,7 @@ def check_manager_transaction(choice):
                 i['sale'] = int(sale_price*100)/100.0
                 left = price - i['L']
                 right = i['H'] - price
-                i['P%'] = int(right / (right + left) *100)
+                i['P%'] = int(right / price *100)
                 i['TOR'] = turn_over_ratio.get(code, 10000)
                 i['LB'] = quantity_relative_ratio.get(code, 10000)
                # i['IF%'] = in_flow_ratio.get(code, 10000)
