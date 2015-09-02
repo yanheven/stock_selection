@@ -561,7 +561,7 @@ def check_manager_transaction(choice):
                 profit_now = int((price / price_hold) *100 -100)
                 i['P%_now'] = profit_now
                 # sale_price = price_hold + (i['H'] - price_hold)/2
-                sale_price = price_hold * 1.1
+                sale_price = price_hold * 1.05
                 profit = int((sale_price / i['price'] -1)*100)
                 i['sale'] = int(sale_price*100)/100.0
                 left = price - i['L']
