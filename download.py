@@ -3,15 +3,16 @@ import requests
 import xlrd
 
 
-def download_300_500():
+def download_300_500(fresh = False):
     url500 = 'http://115.29.204.48/webdata/Csi905Perf.xls'
     url300 = 'http://115.29.204.48/webdata/Csi300Perf.xls'
     ret_list = []
     for i in [url300, url500]:
         name = i.split('/')[-1]
-        ret = requests.get(i)
-        with open(name, 'w') as fb:
-            fb.write(ret.content)
+        if fresh:
+            ret = requests.get(i)
+            with open(name, 'w') as fb:
+                fb.write(ret.content)
 
         data = xlrd.open_workbook(name)
         table = data.sheets()[0]

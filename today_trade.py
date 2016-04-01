@@ -1,5 +1,7 @@
 #_*_ coding: UTF-8 _*_
 __author__ = 'evan'
+import time
+
 from download import download_300_500
 from download import get_current_300_500
 
@@ -21,7 +23,9 @@ def predict():
     change_500 = current_point[1] / history_data[1][0] * 100 - 100
     print(change_300, change_500)
 
-    message = '''$蛋卷斗牛二八轮动(CSI001)$ 沪深300 中证500 与20天前对比涨幅分别为： ''' + current_300 + ',' + current_500
+    current_time = time.strftime('%F %T',time.localtime())
+    message = current_time + ''' $蛋卷斗牛二八轮动(CSI001)$ 沪深300 中证500 与20天前对比涨幅分别为： '''\
+              + current_300 + '% , ' + current_500 + '%'
     print(message)
 
 
