@@ -34,7 +34,7 @@ def predict():
 
     current_time = time.strftime('%F %T',time.localtime())
     message = current_time + ''' $蛋卷斗牛二八轮动(CSI001)$ $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
-              + current_300 + '% , ' + current_500 + '% , ' + current_500 + '%, 今天轮动信号为持有：' + sign_message
+              + current_300 + '% , ' + current_500 + '%, 今天轮动信号为持有：' + sign_message
     LOG.warn(message)
     print(message)
     sess = get_xueqiu_session()
