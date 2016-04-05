@@ -22,8 +22,13 @@ def predict():
 
     current_300 = current_point[0] / history_data[0][19] * 100 - 100
     current_500 = current_point[1] / history_data[1][19] * 100 - 100
-    sign_message = '''沪深300''' if current_300 > current_500 \
-        else '''中证500'''
+    sign_message = ''
+    if current_300 >= current_500:
+        sign_message = '''沪深300'''
+    elif current_300 < current_500:
+        sign_message = '''中证500'''
+    else:
+        sign_message = '''国债'''
     current_300 = str(int(current_300 * 100) / 100.0)
     current_500 = str(int(current_500 * 100) / 100.0)
     print(current_300, current_500)
