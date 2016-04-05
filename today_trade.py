@@ -14,7 +14,7 @@ import logger
 LOG = logger.get_loger()
 
 def predict():
-    history_data = download_300_500(False)
+    history_data = download_300_500(True)
     current_point = get_current_300_500()
     early_300 = history_data[0][0] / history_data[0][19] * 100 - 100
     early_500 = history_data[1][0] / history_data[1][19] * 100 - 100
@@ -22,6 +22,8 @@ def predict():
 
     current_300 = current_point[0] / history_data[0][19] * 100 - 100
     current_500 = current_point[1] / history_data[1][19] * 100 - 100
+    sign_message = '''沪深300''' if current_300 > current_500 \
+        else '''中证500'''
     current_300 = str(int(current_300 * 100) / 100.0)
     current_500 = str(int(current_500 * 100) / 100.0)
     print(current_300, current_500)
@@ -32,7 +34,7 @@ def predict():
 
     current_time = time.strftime('%F %T',time.localtime())
     message = current_time + ''' $蛋卷斗牛二八轮动(CSI001)$ $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
-              + current_300 + '% , ' + current_500 + '%'
+              + current_300 + '% , ' + current_500 + '% , ' + current_500 + '%, 今天轮动信号为持有：' + sign_message
     LOG.warn(message)
     print(message)
     sess = get_xueqiu_session()

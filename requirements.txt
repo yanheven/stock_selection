@@ -1,5 +1,5 @@
 requests
 prettytable
-textwrap
-six
+##textwrap
+#six
 xlrd
