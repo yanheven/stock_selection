@@ -3,6 +3,7 @@ __author__ = 'evan'
 import time
 import json
 import requests
+import random
 
 from download import download_300_500
 from download import get_current_300_500
@@ -62,4 +63,11 @@ def predict():
 
 
 if __name__ == '__main__':
+    now_hour = time.strftime('%H',time.localtime())
+    if now_hour == '05':
+        time.sleep(random.randint(1, 7200))
+    if now_hour == '09':
+        time.sleep(random.randint(1, 300))
+    if now_hour == '14':
+        time.sleep(random.randint(1, 500))
     predict()
