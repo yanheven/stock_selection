@@ -1,4 +1,6 @@
 __author__ = 'evan'
+import os
+import time
 import requests
 import xlrd
 
@@ -9,6 +11,12 @@ def download_300_500(fresh = False):
     ret_list = []
     for i in [url300, url500]:
         name = i.split('/')[-1]
+        if os.path.isfile(os.getcwd() + '/' + name):
+            statinfo = os.stat(name)
+            st_mtime = time.strftime('%F', time.localtime(statinfo.st_mtime))
+            current_time = time.strftime('%F', time.localtime())
+            if st_mtime == current_time:
+                fresh = False
         if fresh:
             ret = requests.get(i)
             with open(name, 'w') as fb:
