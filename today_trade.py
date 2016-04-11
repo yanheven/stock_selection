@@ -43,23 +43,24 @@ def predict():
               + current_300 + '% , ' + current_500 + '%, 今天轮动信号为持有：' + sign_message
     LOG.warn(message)
     print(message)
-    sess = get_xueqiu_session()
-    timestamp = str(time.time()*1000)
-    # token = sess.get('http://xueqiu.com/c/pin/session', headers=HEADERS)
-    token = sess.get('http://xueqiu.com/service/csrf?api=%2Fstatuses%2Fupdate.json&_=', headers=HEADERS)
-    LOG.warn(token)
-    token = json.loads(token.content)
-    token = str(token.get('token'))
-    LOG.warn(token)
-    body = {'status': '<p>' + message + '</p>',
-            'session_token': token}
-    url = 'http://xueqiu.com/statuses/update.json'
-    HEADERS.update({'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    'Referer': 'http://xueqiu.com/afio',
-                    'X-Requested-With': 'XMLHttpRequest'})
-    ret = sess.post(url, data=body, headers=HEADERS)
-    print(ret)
-    LOG.warn(ret)
+    return message
+    # sess = get_xueqiu_session()
+    # timestamp = str(time.time()*1000)
+    # # token = sess.get('http://xueqiu.com/c/pin/session', headers=HEADERS)
+    # token = sess.get('http://xueqiu.com/service/csrf?api=%2Fstatuses%2Fupdate.json&_=', headers=HEADERS)
+    # LOG.warn(token)
+    # token = json.loads(token.content)
+    # token = str(token.get('token'))
+    # LOG.warn(token)
+    # body = {'status': '<p>' + message + '</p>',
+    #         'session_token': token}
+    # url = 'http://xueqiu.com/statuses/update.json'
+    # HEADERS.update({'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    #                 'Referer': 'http://xueqiu.com/afio',
+    #                 'X-Requested-With': 'XMLHttpRequest'})
+    # ret = sess.post(url, data=body, headers=HEADERS)
+    # print(ret)
+    # LOG.warn(ret)
 
 
 if __name__ == '__main__':

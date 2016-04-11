@@ -3,3 +3,4 @@ prettytable
 ##textwrap
 #six
 xlrd
+django
