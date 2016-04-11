@@ -8,4 +8,4 @@
 
 if __name__ == '__main__':
     from get_xueqiu_follow import gen_send
-    gen_send(10)
+    gen_send(3)
