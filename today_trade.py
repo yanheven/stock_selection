@@ -14,15 +14,16 @@ import logger
 
 LOG = logger.get_loger()
 
-def predict():
+def predict(his_day=19):
+    # 19 for 20 days before. 18 for 19days before.
     history_data = download_300_500(True)
     current_point = get_current_300_500()
     early_300 = history_data[0][0] / history_data[0][19] * 100 - 100
     early_500 = history_data[1][0] / history_data[1][19] * 100 - 100
     print(early_300, early_500)
 
-    current_300 = current_point[0] / history_data[0][19] * 100 - 100
-    current_500 = current_point[1] / history_data[1][19] * 100 - 100
+    current_300 = current_point[0] / history_data[0][his_day] * 100 - 100
+    current_500 = current_point[1] / history_data[1][his_day] * 100 - 100
     sign_message = ''
     if current_300 >= current_500:
         sign_message = '''沪深300'''
