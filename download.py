@@ -15,7 +15,8 @@ def download_300_500(fresh = False):
             statinfo = os.stat(name)
             st_mtime = time.strftime('%F', time.localtime(statinfo.st_mtime))
             current_time = time.strftime('%F', time.localtime())
-            if st_mtime == current_time:
+            hours = int(time.strftime('%H', time.localtime()))
+            if st_mtime == current_time and hours < 16:
                 fresh = False
         if fresh:
             ret = requests.get(i)
