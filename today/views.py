@@ -12,3 +12,8 @@ def get(request):
 def get_tomorrow(request):
     message = predict(18)
     return HttpResponse(message)
+
+
+def get_yestoday(request):
+    message = predict(20)
+    return HttpResponse(message)
