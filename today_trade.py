@@ -41,7 +41,7 @@ def predict(his_day=19):
 
     current_time = time.strftime('%F %T',time.localtime())
     message = current_time + '''  $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
-              + current_300 + '% , ' + current_500 + '%, 今天轮动信号为持有：' + sign_message
+              + current_300 + '% , ' + current_500 + '%, 此刻轮动信号为持有：' + sign_message + '。仅供参考，最终信号以收盘时刻为准！'
     LOG.warn(message)
     print(message)
     return message

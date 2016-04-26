@@ -19,17 +19,24 @@ chapters = {'a0': 41,
             '10': 2,
             '11': 18,
             '12': 10}
+
+
+# def get_jpb(url):
+#
+
 for ch, total in chapters.items():
     for i in xrange(1, int(total) + 1):
         index = str(i)
         if i < 10:
             index = '0' + str(i)
         preurl = pre_url + ch + mid_url + index
-        url1 = pre_url + end_rul
-        resp = requests.get(url1)
+        url1 = preurl + end_rul
+        resp = requests.get(url1, allow_redirects=False)
+        name = ch + mid_url + index + end_rul
         if resp.status_code != 200:
             url2 = preurl + alt_url + end_rul
-            resp = requests.get(url2)
-        name = ch + mid_url + index + end_rul
+            # print(url2)
+            resp = requests.get(url2, allow_redirects=False)
+            name = ch + mid_url + index + alt_url + end_rul
         with open(name, 'w') as fb:
             fb.write(resp.content)
