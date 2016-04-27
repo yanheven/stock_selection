@@ -20,7 +20,7 @@ def predict(his_day=19):
     current_point = get_current_300_500()
     early_300 = history_data[0][0] / history_data[0][19] * 100 - 100
     early_500 = history_data[1][0] / history_data[1][19] * 100 - 100
-    print(early_300, early_500)
+    # print(early_300, early_500)
 
     current_300 = current_point[0] / history_data[0][his_day] * 100 - 100
     current_500 = current_point[1] / history_data[1][his_day] * 100 - 100
@@ -33,17 +33,18 @@ def predict(his_day=19):
         sign_message = '''国债'''
     current_300 = str(int(current_300 * 100) / 100.0)
     current_500 = str(int(current_500 * 100) / 100.0)
-    print(current_300, current_500)
+    # print(current_300, current_500)
 
     change_300 = current_point[0] / history_data[0][0] * 100 - 100
     change_500 = current_point[1] / history_data[1][0] * 100 - 100
-    print(change_300, change_500)
+    # print(change_300, change_500)
 
     current_time = time.strftime('%F %T',time.localtime())
     message = current_time + '''  $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
-              + current_300 + '% , ' + current_500 + '%, 此刻轮动信号为持有：' + sign_message + '。仅供参考，最终信号以收盘时刻为准！'
-    LOG.warn(message)
-    print(message)
+              + current_300 + '% , ' + current_500 + '%, 此刻轮动信号为持有：' + sign_message + '。仅供参考，最终信号以收盘时刻为准！' \
+              + '\n           关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号！'
+    # LOG.warn(message)
+    # print(message)
     return message
     # sess = get_xueqiu_session()
     # timestamp = str(time.time()*1000)
