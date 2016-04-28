@@ -29,3 +29,7 @@ def get_tomorrow(request):
 def get_yestoday(request):
     message = predict(20)
     return HttpResponse(message)
+
+
+def test(request):
+    return HttpResponse('<h>test</h>')
