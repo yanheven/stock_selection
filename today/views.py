@@ -32,4 +32,4 @@ def get_yestoday(request):
 
 
 def test(request):
-    return HttpResponse('<h>test</h>')
+    return HttpResponse('<h1>test</h1>')
