@@ -20,17 +20,17 @@ def log_ip(request):
 
 def get(request):
     message = predict()
-    return HttpResponse(message)
+    return render_to_response('today/index.html', {'message': message})
 
 
 def get_tomorrow(request):
     message = predict(18)
-    return HttpResponse(message)
+    return render_to_response('today/index.html', {'message': message})
 
 
 def get_yestoday(request):
     message = predict(20)
-    return HttpResponse(message)
+    return render_to_response('today/index.html', {'message': message})
 
 
 def test(request):
