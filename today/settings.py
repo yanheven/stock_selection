@@ -48,7 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'today.log_request_ip.LogIp'
+    # 'today.log_request_ip.LogIp'
 )
 
 ROOT_URLCONF = 'today.urls'
@@ -56,7 +56,7 @@ ROOT_URLCONF = 'today.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,5 +1,7 @@
 __author__ = 'evan'
 from django.http import HttpResponse
+from django.shortcuts import render_to_response, render
+from django.template.loader import get_template, render_to_string
 
 from today_trade import predict
 import logger
@@ -32,4 +34,15 @@ def get_yestoday(request):
 
 
 def test(request):
-    return HttpResponse('<h1>test</h1>')
+    # t = get_template('today/index.html')
+    # print(t)
+    # import pdb
+    # pdb.set_trace()
+    # # return HttpResponse(t.render())
+    # return render(request, 'today/index.html')
+    # try:
+    #     print(render_to_string('today/templates/today/base.html'))
+    #     return HttpResponse('a')
+    return render_to_response('today/index.html')
+    # except Exception as e:
+    #     print(e)
