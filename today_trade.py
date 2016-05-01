@@ -99,36 +99,36 @@ def report():
             if p1_minus > p2_minus:
                 # buy p1
                 if hold_stock != 'p1':
-                    ret_message += '{0} 大盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
                     if hold_stock == 'p2':
                         balance *= (p2[i] * 1.0 / hold_price)
                     hold_price = p1[i]
                     hold_stock = 'p1'
+                    ret_message += '{0} 大盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
             else:
                 # buy p2
                 if hold_stock != 'p2':
-                    ret_message += '{0} 小盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
                     if hold_stock == 'p1':
                         balance *= (p1[i] * 1.0 / hold_price)
                     hold_price = p2[i]
                     hold_stock = 'p2'
+                    ret_message += '{0} 小盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
         elif p2_minus > threadhold:
             # buy p2
             if hold_stock != 'p2':
-                ret_message += '{0} 小盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
                 if hold_stock == 'p1':
                     balance *= (p1[i] * 1.0 / hold_price)
                 hold_price = p2[i]
                 hold_stock = 'p2'
+                ret_message += '{0} 小盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
         else:
-            if hold_stock != '':
-                ret_message += '{0} 空仓, 点数:{1:.2f}\n'.format(p11[i][0], balance)
             if hold_stock == 'p1':
                 balance *= (p1[i] * 1.0 / hold_price)
             elif hold_stock == 'p2':
                 balance *= (p2[i] * 1.0 / hold_price)
+            if hold_stock != '':
+                ret_message += '{0} 空仓, 点数:{1:.2f}\n'.format(p11[i][0], balance)
             hold_stock = ''
-        # print(p1[i], p2[i], balance)
+    ret_message += '{0} 截止, 点数:{1:.2f}\n'.format(p11[i][0], balance)
     # print(balance)
     return ret_message
 
