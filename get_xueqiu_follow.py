@@ -1,5 +1,6 @@
 # coding=utf-8
 import requests
+import subprocess
 import json
 import time
 from login import get_xueqiu_session
@@ -26,8 +27,8 @@ def get_follow():
     # sess = requests.session()
     sess = get_xueqiu_session()
     ret = sess.get('http://xueqiu.com', headers=nomore_xueqiu.HEADERS)
-    old_user = get_28()
-    print(len(old_user))
+    # old_user = get_28()
+    # print(len(old_user))
     for i in range(2):
         url = base_url + '&start=' + str(i * 100) + '&count=100' + '&_=' + str(time.time())
         # url = base_url + '&start=' + str(i * 100) + '&_=' + str(time.time())
@@ -44,9 +45,19 @@ def get_follow():
             ids = []
             for i in content:
                 ids.append(i.get('profile')[1:])
-    old_user = list(set(old_user + ids))
+    # old_user = list(set(old_user + ids))
+    # print(len(old_user))
+    # write_28(old_user)
+    return ids
+
+
+def create_follow():
+    new_user = get_follow()
+    old_user = get_28()
     print(len(old_user))
-    write_28(old_user)
+    all_user = list(set(old_user + new_user))
+    print(len(all_user))
+    write_28(all_user)
 
 def gen_send(n):
     sh = r'''curl 'https://im1.xueqiu.com/im-comet/v2/messages.json?user_id=6391839192' -H 'Cookie: s=1d8211yp0n; bid=f507d90c8e6824d45daf940d93ff2766_imsl96jl; snbim_minify=false; xq_a_token=29471b6f61e052211fcccf4ecef5d53f462f3246; xqat=29471b6f61e052211fcccf4ecef5d53f462f3246; xq_r_token=5c8299aae4dc67c360077c6eba4b47a2a69a3954; xq_is_login=1; u=6391839192; xq_token_expire=Wed%20May%2004%202016%2012%3A24%3A20%20GMT%2B0800%20(CST); Hm_lvt_1db88642e346389874251b5a1eded6e3=1460172914; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1460176089' -H 'Origin: https://im1.xueqiu.com' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,ja;q=0.2' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36' -H 'Content-Type: application/json' -H 'Accept: */*' -H 'cache-control: no-cache' -H 'Referer: https://im1.xueqiu.com/proxy2.html' -H 'Connection: keep-alive' --data-binary $'{"toId":'''
@@ -77,13 +88,24 @@ def create_friend(n):
     write_28(sent_user, send_name)
     for i in to_send_user:
         bash = sh + i + sh2
-        import subprocess
+        print(bash+'\n')
+        subprocess.call(bash, shell=True)
+
+
+def send_ad():
+    curl = raw_input('input curl:')
+    start = int(raw_input('input start:'))
+    end = int(raw_input('input end:'))
+    sh1 = curl.split('"toId":')[0] + '"toId":'
+    sh2 = ',"toGroup":' + curl.split(',"toGroup":')[1]
+    users = get_follow()[start:end]
+    for i in users:
+        bash = sh1 + i + sh2
         print(bash+'\n')
         subprocess.call(bash, shell=True)
 
 
 if __name__ == '__main__':
-    get_follow()
-
-
+    # create_follow()
+    send_ad()
 
