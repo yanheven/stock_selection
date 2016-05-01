@@ -87,7 +87,7 @@ def report():
     # balance *= (1 + fixed_pro) ** 20
     internal = 20
     threadhold = 0.0
-    ret_message = ''
+    ret_message = '大盘使用沪深300，小盘使用中证500，空仓时按货币基金年化2.7%收益计算。\n\n'
     for i in xrange(internal, lenght):
         if hold_stock:
             balance -= balance * fee
