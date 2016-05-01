@@ -3,6 +3,7 @@ import os
 import time
 import requests
 import xlrd
+import csv
 
 
 def download_300_500(fresh = False):
@@ -26,7 +27,7 @@ def download_300_500(fresh = False):
         data = xlrd.open_workbook(name)
         table = data.sheets()[0]
         lines = []
-        for rnum in range(1,table.nrows):
+        for rnum in range(1, table.nrows):
             rvalue = table.row_values(rnum)[7]
             rvalue = float(rvalue)
             lines.append(rvalue)
@@ -48,5 +49,33 @@ def get_current_300_500():
     return ret_list
 
 
+def download_163():
+    base_url = 'http://quotes.money.163.com/service/chddata.html?code=0'
+    date = '&fields=TCLOSE&start=20160217&end='
+    codes = ['000300', '000905']
+    current_time = time.strftime('%Y%m%d', time.localtime())
+    ret_list = []
+    fresh = True
+    for i in codes:
+        name = i + '.csv'
+        if os.path.isfile(os.getcwd() + '/' + name):
+            statinfo = os.stat(name)
+            st_mtime = time.strftime('%F', time.localtime(statinfo.st_mtime))
+            current_time = time.strftime('%F', time.localtime())
+            if st_mtime == current_time:
+                fresh = False
+        if fresh:
+            print('download')
+            url = base_url + i + date + current_time
+            ret = requests.get(url)
+            with open(name, 'w') as fb:
+                fb.write(ret.content)
+        reader = csv.reader(open(name))
+        lines = list(reader)[1:]
+        ret_list.append(lines)
+    return ret_list
+
+
 if __name__ == '__main__':
-    print(download_300_500())
+    # print(download_300_500())
+    download_163()

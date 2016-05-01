@@ -1,9 +1,9 @@
-__author__ = 'evan'
+# -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, render
 from django.template.loader import get_template, render_to_string
 
-from today_trade import predict
+from today_trade import predict, report
 import logger
 
 
@@ -31,6 +31,12 @@ def get_tomorrow(request):
 def get_yestoday(request):
     message = predict(20)
     return render_to_response('today/index.html', {'message': message})
+
+
+def get_report(request):
+    message = report().replace('\n', '</br>')
+    print(message)
+    return HttpResponse(message)
 
 
 def test(request):

@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^today/', views.get, name='get'),
     url(r'^tomorrow/', views.get_tomorrow, name='get_tomorrow'),
     url(r'^yestoday/', views.get_yestoday, name='get_yestoday'),
+    url(r'^report/', views.get_report, name='get_report'),
     url(r'^test/', views.test, name='test'),
 ]
