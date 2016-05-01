@@ -35,7 +35,6 @@ def get_yestoday(request):
 
 def get_report(request):
     message = report().replace('\n', '</br>')
-    print(message)
     return HttpResponse(message)
 
 
