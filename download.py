@@ -60,14 +60,16 @@ def download_163():
         name = i + '.csv'
         if os.path.isfile(os.getcwd() + '/' + name):
             statinfo = os.stat(name)
-            st_mtime = time.strftime('%F', time.localtime(statinfo.st_mtime))
-            current_time = time.strftime('%F', time.localtime())
+            st_mtime = time.strftime('%Y%m%d', time.localtime(statinfo.st_mtime))
+            # current_time = time.strftime('%F', time.localtime())
             if st_mtime == current_time:
+                # pass
                 fresh = False
         if fresh:
             print('download')
             url = base_url + i + date + current_time
             ret = requests.get(url)
+            # print(url)
             with open(name, 'w') as fb:
                 fb.write(ret.content)
         reader = csv.reader(open(name))
@@ -78,4 +80,4 @@ def download_163():
 
 if __name__ == '__main__':
     # print(download_300_500())
-    download_163()
+    print(download_163())
