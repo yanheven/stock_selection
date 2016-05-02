@@ -106,6 +106,6 @@ def send_ad():
 
 
 if __name__ == '__main__':
-    # create_follow()
-    send_ad()
+    create_follow()
+    # send_ad()
 
