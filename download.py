@@ -5,6 +5,7 @@ import requests
 import xlrd
 import csv
 
+from cache_data import CACHE_DATA as CACHE
 
 def download_300_500(fresh = False):
     url500 = 'http://115.29.204.48/webdata/Csi905Perf.xls'
@@ -45,7 +46,6 @@ def get_300_500():
             close = float(i[3])
             code_list.append(close)
         ret_list.append(code_list)
-    print(ret_list)
     return ret_list
 
 
@@ -63,33 +63,40 @@ def get_current_300_500():
 
 
 def download_163():
-    base_url = 'http://quotes.money.163.com/service/chddata.html?code=0'
-    date = '&fields=TCLOSE&start=20160217&end='
-    codes = ['000300', '000905']
-    current_time = time.strftime('%Y%m%d', time.localtime())
-    ret_list = []
-    fresh = True
-    for i in codes:
-        name = i + '.csv'
-        if os.path.isfile(os.getcwd() + '/' + name):
-            statinfo = os.stat(name)
-            st_mtime = time.strftime('%Y%m%d', time.localtime(statinfo.st_mtime))
-            # current_time = time.strftime('%F', time.localtime())
-            hours = int(time.strftime('%H', time.localtime(statinfo.st_mtime)))
-            if st_mtime == current_time and hours < 18:
-                # pass
-                fresh = False
-        if fresh:
-            print('download')
-            url = base_url + i + date + current_time
-            ret = requests.get(url)
-            # print(url)
-            with open(name, 'w') as fb:
-                fb.write(ret.content)
-        reader = csv.reader(open(name))
-        lines = list(reader)[1:]
-        ret_list.append(lines)
-    return ret_list
+    current_day = time.strftime('%Y%m%d', time.localtime())
+    current_hour = int(time.strftime('%H', time.localtime()))
+    if CACHE['update_date']['day'] != current_day or \
+            CACHE['update_date']['hour'] < 18 and current_hour > 18:
+
+        CACHE['update_date']['day'] = current_day
+        CACHE['update_date']['hour'] = current_hour
+        base_url = 'http://quotes.money.163.com/service/chddata.html?code=0'
+        date = '&fields=TCLOSE&start=20160217&end='
+        codes = ['000300', '000905']
+        ret_list = []
+        fresh = True
+        for i in codes:
+            name = i + '.csv'
+            if os.path.isfile(os.getcwd() + '/' + name):
+                statinfo = os.stat(name)
+                st_mtime = time.strftime('%Y%m%d', time.localtime(statinfo.st_mtime))
+                # current_time = time.strftime('%F', time.localtime())
+                hours = int(time.strftime('%H', time.localtime(statinfo.st_mtime)))
+                if st_mtime == current_day and hours < 18:
+                    # pass
+                    fresh = False
+            if fresh:
+                print('download')
+                url = base_url + i + date + current_day
+                ret = requests.get(url)
+                # print(url)
+                with open(name, 'w') as fb:
+                    fb.write(ret.content)
+            reader = csv.reader(open(name))
+            lines = list(reader)[1:]
+            ret_list.append(lines)
+        CACHE['list'] = ret_list
+    return CACHE['list']
 
 
 if __name__ == '__main__':
