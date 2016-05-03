@@ -36,6 +36,19 @@ def download_300_500(fresh = False):
     return ret_list
 
 
+def get_300_500():
+    data = download_163()
+    ret_list = []
+    for code in data:
+        code_list = []
+        for i in code:
+            close = float(i[3])
+            code_list.append(close)
+        ret_list.append(code_list)
+    print(ret_list)
+    return ret_list
+
+
 def get_current_300_500():
     url300 = 'http://hq.sinajs.cn/list=s_sz399300'
     url500 = 'http://hq.sinajs.cn/list=s_sh000905'
@@ -63,7 +76,7 @@ def download_163():
             st_mtime = time.strftime('%Y%m%d', time.localtime(statinfo.st_mtime))
             # current_time = time.strftime('%F', time.localtime())
             hours = int(time.strftime('%H', time.localtime(statinfo.st_mtime)))
-            if st_mtime == current_time and hours > 15:
+            if st_mtime == current_time and hours > 18:
                 # pass
                 fresh = False
         if fresh:

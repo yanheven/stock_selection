@@ -5,7 +5,7 @@ import json
 import requests
 import random
 
-from download import download_300_500
+from download import download_300_500, get_300_500
 from download import get_current_300_500
 from download import download_163
 from login import get_xueqiu_session
@@ -17,7 +17,8 @@ LOG = logger.get_loger()
 
 def predict(his_day=19):
     # 19 for 20 days before. 18 for 19days before.
-    history_data = download_300_500(True)
+    # history_data = download_300_500(True)
+    history_data = get_300_500()
     current_point = get_current_300_500()
     early_300 = history_data[0][0] / history_data[0][19] * 100 - 100
     early_500 = history_data[1][0] / history_data[1][19] * 100 - 100
