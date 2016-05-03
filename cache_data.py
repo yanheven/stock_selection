@@ -5,4 +5,5 @@ CACHE_DATA = {
         'hour': 1,
     },
     'list': None,
+    'current_tuple': None
 }

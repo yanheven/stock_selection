@@ -50,16 +50,19 @@ def get_300_500():
 
 
 def get_current_300_500():
-    url300 = 'http://hq.sinajs.cn/list=s_sz399300'
-    url500 = 'http://hq.sinajs.cn/list=s_sh000905'
-    ret_list = []
-    for i in [url300, url500]:
-        ret = requests.get(i)
-        point = ret.content.split(',')[1]
-        point = float(point)
-        # print(point)
-        ret_list.append(point)
-    return ret_list
+    current_hour = int(time.strftime('%H', time.localtime()))
+    if not CACHE['current_tuple'] or 15 > current_hour > 9:
+        url300 = 'http://hq.sinajs.cn/list=s_sz399300'
+        url500 = 'http://hq.sinajs.cn/list=s_sh000905'
+        ret_list = []
+        for i in [url300, url500]:
+            ret = requests.get(i)
+            point = ret.content.split(',')[1]
+            point = float(point)
+            # print(point)
+            ret_list.append(point)
+        CACHE['current_tuple'] = ret_list
+    return CACHE['current_tuple']
 
 
 def download_163():
