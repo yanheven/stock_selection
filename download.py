@@ -76,7 +76,7 @@ def download_163():
             st_mtime = time.strftime('%Y%m%d', time.localtime(statinfo.st_mtime))
             # current_time = time.strftime('%F', time.localtime())
             hours = int(time.strftime('%H', time.localtime(statinfo.st_mtime)))
-            if st_mtime == current_time and hours > 18:
+            if st_mtime == current_time and hours < 18:
                 # pass
                 fresh = False
         if fresh:
