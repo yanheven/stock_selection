@@ -26,6 +26,7 @@ def get(request):
 def get_talbe(request):
     message = predict()
     context = dict(date=message[0].split()[0],
+                   time=message[0],
                    data_1=message[1],
                    data_2=message[2],
                    data_20_1=message[3],
