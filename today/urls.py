@@ -19,7 +19,8 @@ import views
 
 urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^today/', views.get, name='get'),
+    url(r'^today/', views.get_talbe, name='get_table'),
+    url(r'^today_origin/', views.get, name='get'),
     url(r'^tomorrow/', views.get_tomorrow, name='get_tomorrow'),
     url(r'^yestoday/', views.get_yestoday, name='get_yestoday'),
     url(r'^report/', views.get_report, name='get_report'),

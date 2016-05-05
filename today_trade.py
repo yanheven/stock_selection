@@ -18,13 +18,14 @@ LOG = logger.get_loger()
 def predict(his_day=19):
     # 19 for 20 days before. 18 for 19days before.
     # history_data = download_300_500(True)
-    history_data = get_300_500()
+    all_data = download_163()
+    # history_data = get_300_500()
     current_point = get_current_300_500()
     # early_300 = history_data[0][0] / history_data[0][19] * 100 - 100
     # early_500 = history_data[1][0] / history_data[1][19] * 100 - 100
     # print(early_300, early_500)
-    his_300 = history_data[0][his_day]
-    his_500 = history_data[1][his_day]
+    his_300 = float(all_data[0][his_day][3])
+    his_500 = float(all_data[1][his_day][3])
     current_300 = current_point[0] / his_300 * 100 - 100
     current_500 = current_point[1] / his_500 * 100 - 100
     sign_message = ''
@@ -43,34 +44,30 @@ def predict(his_day=19):
     # print(change_300, change_500)
 
     current_time = time.strftime('%F %T',time.localtime())
-    message = current_time + '''  $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
-              + current_300 + '% , ' + current_500 + '%, 此刻轮动信号为持有：' + sign_message + '。仅供参考，最终信号以收盘时刻为准！' \
-              + '\n           关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号！'
+    # message = current_time + '''  $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
+    #           + current_300 + '% , ' + current_500 + '%, 此刻轮动信号为持有：' + sign_message + '。仅供参考，最终信号以收盘时刻为准！' \
+    #           + '\n           关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号！'
     message = '''{0}  $沪深300(SZ399300)$ $中证500(SH000905)$({1}, {2}) 与20天前 ({3},\
               {4}) 对比涨幅分别为：({5}%, {6}%),  此刻轮动信号为持有：{7}。仅供参考，
               最终信号以收盘时刻为准！ 关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号\
               ！'''.format(current_time, current_point[0], current_point[1],
                           his_300, his_500, current_300, current_500, sign_message)
-    # LOG.warn(message)
-    # print(message)
-    return message
-    # sess = get_xueqiu_session()
-    # timestamp = str(time.time()*1000)
-    # # token = sess.get('http://xueqiu.com/c/pin/session', headers=HEADERS)
-    # token = sess.get('http://xueqiu.com/service/csrf?api=%2Fstatuses%2Fupdate.json&_=', headers=HEADERS)
-    # LOG.warn(token)
-    # token = json.loads(token.content)
-    # token = str(token.get('token'))
-    # LOG.warn(token)
-    # body = {'status': '<p>' + message + '</p>',
-    #         'session_token': token}
-    # url = 'http://xueqiu.com/statuses/update.json'
-    # HEADERS.update({'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-    #                 'Referer': 'http://xueqiu.com/afio',
-    #                 'X-Requested-With': 'XMLHttpRequest'})
-    # ret = sess.post(url, data=body, headers=HEADERS)
-    # print(ret)
-    # LOG.warn(ret)
+
+    # return message
+    return (current_time, current_point[0], current_point[1],
+            his_300, his_500, current_300, current_500, sign_message, all_data[0][his_day][0], message)
+
+
+def get_predict_message(his_day=19):
+    return predict(his_day)[-1]
+    # data = tuple(predict(his_day)[:-1])
+    # print(data)
+    # message = '''{0}  $沪深300(SZ399300)$ $中证500(SH000905)$({1}, {2}) 与20天前 ({3},\
+    #           {4}) 对比涨幅分别为：({5}%, {6}%),  此刻轮动信号为持有：{7}。仅供参考，\
+    #           最终信号以收盘时刻为准！ 关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号\
+    #           ！'''.format(*data)
+    # predict(message)
+    # return message
 
 
 def report():
