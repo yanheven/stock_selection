@@ -51,7 +51,7 @@ def get_300_500():
 
 def get_current_300_500():
     current_hour = int(time.strftime('%H', time.localtime()))
-    if not CACHE['current_tuple'] or 15 > current_hour >= 9:
+    if not CACHE['current_tuple'] or 16 > current_hour >= 9:
         url300 = 'http://hq.sinajs.cn/list=s_sz399300'
         url500 = 'http://hq.sinajs.cn/list=s_sh000905'
         ret_list = []
