@@ -132,8 +132,14 @@ def report():
             if hold_stock != '':
                 ret_message += '{0} 空仓, 点数:{1:.2f}\n'.format(p11[i][0], balance)
             hold_stock = ''
+        if 1 < lenght - i <= 5:
+            ret_message += '{0} 收盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
+        if lenght - i == 5:
+            balance_0 = balance
     # print(p11)
     ret_message += '{0} 截止, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
+    change = balance * 100 / balance_0 -100
+    ret_message += '最后5天涨跌百分比:{0:.2f}\n'.format(change)
     # print(balance)
     return ret_message
 
