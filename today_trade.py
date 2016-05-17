@@ -47,10 +47,10 @@ def predict(his_day=19):
     # message = current_time + '''  $沪深300(SZ399300)$ $中证500(SH000905)$ 与20天前对比涨幅分别为： '''\
     #           + current_300 + '% , ' + current_500 + '%, 此刻轮动信号为持有：' + sign_message + '。仅供参考，最终信号以收盘时刻为准！' \
     #           + '\n           关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号！'
-    message = '''{0}  $沪深300(SZ399300)$ $中证500(SH000905)$({1}, {2}) 与20天前 ({3},\
-              {4}) 对比涨幅分别为：({5}%, {6}%),  此刻轮动信号为持有：{7}。仅供参考，
-              最终信号以收盘时刻为准！ 关注微信订阅号：touzi-abc 交易时间内获取实时二八轮动信号\
-              ！'''.format(current_time, current_point[0], current_point[1],
+    message = '''{0}  沪深300 中证500 ({1}, {2}) 与20天前 ({3},\
+              {4}) 对比涨幅分别为：({5}%, {6}%),  此刻轮动信号为持有：{7}。仅供参考，\
+              最终信号以收盘时刻为准！--内容来自http://120.26.84.164:8080/today\
+              '''.format(current_time, current_point[0], current_point[1],
                           his_300, his_500, current_300, current_500, sign_message)
 
     # return message
