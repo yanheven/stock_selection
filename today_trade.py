@@ -132,8 +132,8 @@ def report():
             if hold_stock != '':
                 ret_message += '{0} 空仓, 点数:{1:.2f}\n'.format(p11[i][0], balance)
             hold_stock = ''
-        if 1 < lenght - i <= 5:
-            ret_message += '{0} 收盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
+        # if 1 < lenght - i <= 5:
+        #     ret_message += '{0} 收盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
         if lenght - i == 5:
             balance_0 = balance
     # print(p11)
