@@ -39,6 +39,21 @@ def get_talbe(request):
     return render_to_response('today/table.html', context)
 
 
+def get_talbe_(request):
+    message = predict()
+    context = dict(date=message[0].split()[0],
+                   time=message[0],
+                   data_1=message[1],
+                   data_2=message[2],
+                   data_20_1=message[3],
+                   data_20_2=message[4],
+                   chg_1=message[5],
+                   chg_2=message[6],
+                   signal=message[7],
+                   date_20=message[8])
+    return render_to_response('today/table_.html', context)
+
+
 def get_tomorrow(request):
     message = get_predict_message(18)
     return render_to_response('today/index.html', {'message': message})
@@ -79,6 +94,18 @@ def get_399006(request):
                    signal=message[4],
                    date_20=message[5])
     return render_to_response('today/399006.html', context)
+
+
+def get_399006_(request):
+    message = predict_399006()
+    context = dict(date=message[0].split()[0],
+                   time=message[0],
+                   data=message[1],
+                   data_20=message[2],
+                   chg=message[3],
+                   signal=message[4],
+                   date_20=message[5])
+    return render_to_response('today/399006_.html', context)
 
 
 def get_399006_origin(request):

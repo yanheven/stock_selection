@@ -20,7 +20,9 @@ import views
 urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^399006/', views.get_399006, name='get_399006'),
+    url(r'^399006_/', views.get_399006_, name='get_399006_'),
     url(r'^today/', views.get_talbe, name='get_table'),
+    url(r'^today_/', views.get_talbe_, name='get_table_'),
     url(r'^today_origin/', views.get, name='get'),
     url(r'^399006_origin/', views.get_399006_origin, name='get_399006_origin'),
     url(r'^tomorrow/', views.get_tomorrow, name='get_tomorrow'),
