@@ -54,8 +54,9 @@ def get_current_300_500():
     if not CACHE['current_tuple'] or 16 > current_hour >= 9:
         url300 = 'http://hq.sinajs.cn/list=s_sz399300'
         url500 = 'http://hq.sinajs.cn/list=s_sh000905'
+        url006 = 'http://hq.sinajs.cn/list=s_sz399006'
         ret_list = []
-        for i in [url300, url500]:
+        for i in [url300, url500, url006]:
             ret = requests.get(i)
             point = ret.content.split(',')[1]
             point = float(point)
@@ -73,9 +74,9 @@ def download_163():
 
         CACHE['update_date']['day'] = current_day
         CACHE['update_date']['hour'] = current_hour
-        base_url = 'http://quotes.money.163.com/service/chddata.html?code=0'
+        base_url = 'http://quotes.money.163.com/service/chddata.html?code='
         date = '&fields=TCLOSE&start=20160217&end='
-        codes = ['000300', '000905']
+        codes = ['0000300', '0000905', '1399006']
         ret_list = []
         fresh = True
         for i in codes:

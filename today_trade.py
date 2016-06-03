@@ -144,6 +144,80 @@ def report():
     return ret_message
 
 
+def predict_399006(his_day=19):
+    # 19 for 20 days before. 18 for 19days before.
+    # history_data = download_300_500(True)
+    all_data = download_163()
+    # history_data = get_300_500()
+    current_point = get_current_300_500()
+    # early_300 = history_data[0][0] / history_data[0][19] * 100 - 100
+    # early_500 = history_data[1][0] / history_data[1][19] * 100 - 100
+    # print(early_300, early_500)
+    his = float(all_data[2][his_day][3])
+    current = current_point[2] / his * 100 - 100
+    if current > 0:
+        sign_message = '''创业板指'''
+    else:
+        sign_message = '''国债'''
+    current = str(int(current * 100) / 100.0)
+
+    current_time = time.strftime('%F %T',time.localtime())
+    message = '''{0}  创业板指 ({1}) 与20天前 ({2}) 对比涨幅为：({3}%),\
+              此刻轮动信号为持有：{4}。仅供参考，最终信号以收盘时刻为准！\
+              --内容来自http://120.26.84.164:8080/399006\
+              '''.format(current_time, current_point[2], his, current,
+                         sign_message)
+
+    # return message
+    return (current_time, current_point[2],
+            his, current, sign_message, all_data[2][his_day][0], message)
+
+
+def get_predict_message_399006(his_day=19):
+    return predict_399006(his_day)[-1]
+
+
+def report_399006():
+    his = download_163()
+    # p1 for big, p2 for small
+    p1 = his[2][::-1]
+    p11 = p1[:]
+    lenght = len(p1)
+    for i in xrange(lenght):
+        p1[i] = float(p1[i][3])
+    balance = 100
+    fixed_pro = 0.027 / 365
+    fee = 0.004 / 365
+    hold_stock = ''
+    hold_price = 0
+    internal = 20
+    threadhold = 0.0
+    ret_message = '空仓时按货币基金年化2.7%收益计算。\n\n'
+    for i in xrange(internal, lenght):
+        if hold_stock:
+            balance -= balance * fee
+        else:
+            balance += balance * fixed_pro
+        p1_minus = p1[i] * 1.0 / p1[i-internal] - 1
+        if p1_minus > threadhold:
+            # buy p1
+            if hold_stock != 'p1':
+                hold_price = p1[i]
+                hold_stock = 'p1'
+                ret_message += '{0} 创业板, 点数:{1:.2f}\n'.format(p11[i][0], balance)
+        else:
+            if hold_stock == 'p1':
+                balance *= (p1[i] * 1.0 / hold_price)
+                ret_message += '{0} 空仓中, 点数:{1:.2f}\n'.format(p11[i][0], balance)
+            hold_stock = ''
+        if lenght - i == 5:
+            balance_0 = balance
+    ret_message += '{0} 截止时, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
+    change = balance * 100 / balance_0 -100
+    ret_message += '最后5天涨跌百分比:{0:.2f}\n'.format(change)
+    return ret_message
+
+
 if __name__ == '__main__':
     # now_hour = time.strftime('%H',time.localtime())
     # if now_hour == '05':

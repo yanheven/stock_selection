@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, render
 from django.template.loader import get_template, render_to_string
 
 from today_trade import predict, report, get_predict_message
+from today_trade import get_predict_message_399006, predict_399006, report_399006
 import logger
 
 
@@ -66,3 +67,25 @@ def test(request):
     return render_to_response('today/index.html')
     # except Exception as e:
     #     print(e)
+
+
+def get_399006(request):
+    message = predict_399006()
+    context = dict(date=message[0].split()[0],
+                   time=message[0],
+                   data=message[1],
+                   data_20=message[2],
+                   chg=message[3],
+                   signal=message[4],
+                   date_20=message[5])
+    return render_to_response('today/399006.html', context)
+
+
+def get_399006_origin(request):
+    message = get_predict_message_399006()
+    return render_to_response('today/index.html', {'message': message})
+
+
+def get_399006_report(request):
+    message = report_399006().replace('\n', '</br>')
+    return HttpResponse(message)
