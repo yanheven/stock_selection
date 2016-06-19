@@ -217,12 +217,11 @@ def report_399006():
                 balance *= (p1[i] * 1.0 / hold_price)
                 ret_message += '{0} 空仓中, 点数:{1:.2f}\n'.format(p11[i][0], balance)
             hold_stock = ''
-        if lenght - i == 5:
-            balance_0 = balance
+        if lenght - i == 6:
+            if hold_stock == 'p1':
+                balance_0 = balance * (p1[i] * 1.0 / hold_price)
     if hold_stock == 'p1':
         balance *= (p1[i] * 1.0 / hold_price)
-    elif hold_stock == 'p2':
-        balance *= (p2[i] * 1.0 / hold_price)
     ret_message += '{0} 截止时, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
     change = balance * 100 / balance_0 -100
     ret_message += '最后5天涨跌百分比:{0:.2f}\n'.format(change)
