@@ -146,10 +146,14 @@ def report():
         balance *= (p2[i] * 1.0 / hold_price)
     ret_message += '{0} 截止, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
     change = balance * 100 / balance_0 -100
-    ret_message += '最后5天涨跌百分比:{0:.2f}%\n'.format(change)
+    change_51 = p1[i] / p1[i-5] * 100 - 100
+    change_52 = p2[i] / p2[i-5] * 100 - 100
+    ret_message += '最后5天:\n涨跌百分比:{0:.2f}%\n'.format(change)
+    ret_message += '沪深300涨跌幅为:{0:.2f}%\n' \
+                   '中证500涨跌幅为:{1:.2f}%\n\n'.format(change_51, change_52)
     change_1 = p1[i] / p1[internal] * 100 - 100
     change_2 = p2[i] / p2[internal] * 100 - 100
-    ret_message += '同期:\n沪深300涨跌幅为:{0:.2f}%\n' \
+    ret_message += '计划开始至今:\n沪深300涨跌幅为:{0:.2f}%\n' \
                    '中证500涨跌幅为:{1:.2f}%\n'.format(change_1, change_2)
 
     # print(balance)
@@ -229,9 +233,11 @@ def report_399006():
         balance *= (p1[i] * 1.0 / hold_price)
     ret_message += '{0} 截止时, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
     change = balance * 100 / balance_0 -100
-    ret_message += '最后5天涨跌百分比:{0:.2f}%\n'.format(change)
+    change_51 = p1[i] / p1[i-5] * 100 - 100
+    ret_message += '最后5天:\n涨跌百分比:{0:.2f}%\n'.format(change)
+    ret_message += '创业板跌幅为:{0:.2f}%\n\n'.format(change_51)
     change_1 = p1[i] / p1[internal] * 100 - 100
-    ret_message += '同期:\n创业板跌幅为:{0:.2f}%'.format(change_1)
+    ret_message += '计划开始至今:\n创业板跌幅为:{0:.2f}%'.format(change_1)
     return ret_message
 
 
