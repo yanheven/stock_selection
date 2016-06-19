@@ -147,6 +147,11 @@ def report():
     ret_message += '{0} 截止, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
     change = balance * 100 / balance_0 -100
     ret_message += '最后5天涨跌百分比:{0:.2f}\n'.format(change)
+    change_1 = p1[i] / p1[internal] * 100 - 100
+    change_2 = p2[i] / p2[internal] * 100 - 100
+    ret_message += '同期:\n沪深300涨跌幅为:{0:.2f}\n' \
+                   '中证500涨跌幅为:{1:.2f}\n'.format(change_1, change_2)
+
     # print(balance)
     return ret_message
 
@@ -225,6 +230,8 @@ def report_399006():
     ret_message += '{0} 截止时, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
     change = balance * 100 / balance_0 -100
     ret_message += '最后5天涨跌百分比:{0:.2f}\n'.format(change)
+    change_1 = p1[i] / p1[internal] * 100 - 100
+    ret_message += '同期:\n创业板跌幅为:{0:.2f}\n'.format(change_1)
     return ret_message
 
 
