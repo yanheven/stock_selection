@@ -134,8 +134,11 @@ def report():
             hold_stock = ''
         # if 1 < lenght - i <= 5:
         #     ret_message += '{0} 收盘, 点数:{1:.2f}\n'.format(p11[i][0], balance)
-        if lenght - i == 5:
-            balance_0 = balance
+        if lenght - i == 6:
+            if hold_stock == 'p1':
+                balance_0 = balance * (p1[i] * 1.0 / hold_price)
+            elif hold_stock == 'p2':
+                balance_0 = balance * (p2[i] * 1.0 / hold_price)
     # print(p11)
     if hold_stock == 'p1':
         balance *= (p1[i] * 1.0 / hold_price)
