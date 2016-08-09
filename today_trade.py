@@ -139,6 +139,8 @@ def report():
                 balance_0 = balance * (p1[i] * 1.0 / hold_price)
             elif hold_stock == 'p2':
                 balance_0 = balance * (p2[i] * 1.0 / hold_price)
+            else:
+                balance_0 = balance
     # print(p11)
     if hold_stock == 'p1':
         balance *= (p1[i] * 1.0 / hold_price)
@@ -229,6 +231,8 @@ def report_399006():
         if lenght - i == 6:
             if hold_stock == 'p1':
                 balance_0 = balance * (p1[i] * 1.0 / hold_price)
+            else:
+                balance_0 = balance
     if hold_stock == 'p1':
         balance *= (p1[i] * 1.0 / hold_price)
     ret_message += '{0} 截止时, 点数:{1:.2f}\n'.format(p11[-1][0], balance)
